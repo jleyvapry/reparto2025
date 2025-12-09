@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor Item 5 - ESAN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <div x-data="item5App()" x-cloak class="min-h-screen flex flex-col">
+
+        <header class="bg-white shadow p-4 sticky top-0 z-50 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Visor de Evidencias - Item 5</h1>
+                <p class="text-xs text-gray-500">Gestión de entregas e imágenes</p>
+            </div>
+            <button x-show="loggedIn" @click="logout" class="text-sm text-red-500 hover:text-red-700 font-semibold">
+                Salir
+            </button>
+        </header>
+
+        <div x-show="!loggedIn" class="flex-grow flex items-center justify-center p-4">
+            <div class="bg-white p-8 rounded shadow-lg w-full max-w-sm">
+                <h2 class="text-lg font-bold mb-4 text-center">Acceso Restringido</h2>
+                <form @submit.prevent="login">
+                    <input type="email" x-model="emailInput" placeholder="tu.correo@esan.edu.pe" 
+                           class="w-full border p-2 rounded mb-4 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    
+                    <div x-show="errorMsg" class="mb-4 text-red-600 text-xs bg-red-50 p-2 rounded text-center" x-text="errorMsg"></div>
+
+                    <button type="submit" :disabled="loading" 
+                            class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 transition disabled:opacity-50">
+                        <span x-text="loading ? 'Validando...' : 'Ingresar'"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <main x-show="loggedIn" class="flex-grow max-w-7xl mx-auto w-full p-6">
+            
+            <div class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <template x-for="filterName in configFilters" :key="filterName">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1" x-text="filterName"></label>
+                        <select x-model="activeFilters[filterName]" class="w-full border p-2 rounded text-sm bg-gray-50">
+                            <option value="">Todos</option>
+                            <template x-for="val in getUniqueValues(filterName)" :key="val">
+                                <option :value="val" x-text="val"></option>
+                            </template>
+                        </select>
+                    </div>
+                </template>
+                <div class="flex items-end">
+                    <button @click="resetFilters" class="text-sm text-blue-600 hover:underline mb-2">Limpiar filtros</button>
+                </div>
+            </div>
+
+            <div class="mb-2 text-sm font-semibold text-gray-600">
+                Mostrando <span x-text="filteredData.length"></span> registros
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="item in filteredData" :key="item.id">
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden border border-gray-200 flex flex-col relative">
+                        
+                        <div class="absolute top-3 right-3 z-10">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase border"
+                                  :class="item.images.length > 0 ? 'bg-green-100 text-green-800 border-green-200' : 'bg-orange-100 text-orange-800 border-orange-200'"
+                                  x-text="item.images.length > 0 ? 'Entregado' : 'En Ruta'">
+                            </span>
+                        </div>
+
+                        <div class="p-4 border-b bg-gray-50 pt-8">
+                            <template x-for="header in configInfo" :key="header">
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase font-bold" x-text="header"></p>
+                                    <h3 class="text-sm font-semibold text-gray-800 mb-2 truncate" x-text="item[header] || '-'"></h3>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="p-4 flex flex-col gap-2 flex-grow">
+                            <template x-if="item.images.length > 0">
+                                <div>
+                                    <template x-for="img in item.images" :key="img.label">
+                                        <a :href="img.url" target="_blank" 
+                                           class="mb-2 block w-full text-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 px-3 rounded text-sm transition flex items-center justify-center gap-2">
+                                            <span>📷</span> <span x-text="img.label"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <template x-if="item.images.length === 0">
+                                <div class="h-full flex items-center justify-center">
+                                    <p class="text-xs text-orange-400 italic font-medium bg-orange-50 px-3 py-1 rounded-full mt-4">
+                                        Pendiente de evidencias
+                                    </p>
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ===============================================
+        // PEGA AQUÍ LA URL DE TU SCRIPT DEL ITEM 5
+        // ===============================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbw4iAm_QaYkwxyvIjmzdkv0Og13R4fPyDRWhmU0qb5MQzYkU2TykO-OmtbP4Lxa8eBvvw/exec';
+
+        function item5App() {
+            return {
+                loggedIn: false,
+                loading: false,
+                emailInput: '',
+                errorMsg: '',
+                
+                masterData: [],
+                configFilters: [],
+                configInfo: [],
+                activeFilters: {},
+
+                init() {
+                    const savedUser = localStorage.getItem('item5_user');
+                    if (savedUser) {
+                        this.emailInput = savedUser;
+                        this.login();
+                    }
+                },
+
+                async login() {
+                    this.loading = true;
+                    this.errorMsg = '';
+                    try {
+                        const res = await fetch(`${API_URL}?email=${this.emailInput}`);
+                        const json = await res.json();
+
+                        if (json.status === 'success') {
+                            this.configFilters = json.config.filters;
+                            this.configInfo = json.config.info; // ['COD_MOD', 'IIEE']
+                            this.masterData = json.data;
+                            
+                            // Iniciar filtros vacíos
+                            this.configFilters.forEach(f => {
+                                if (!(f in this.activeFilters)) this.activeFilters[f] = "";
+                            });
+
+                            this.loggedIn = true;
+                            localStorage.setItem('item5_user', this.emailInput);
+                        } else {
+                            this.errorMsg = json.message;
+                            this.logout();
+                        }
+                    } catch (e) {
+                        this.errorMsg = 'Error de conexión. Verifica tu internet.';
+                        console.error(e);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                logout() {
+                    this.loggedIn = false;
+                    this.masterData = [];
+                    this.emailInput = '';
+                    localStorage.removeItem('item5_user');
+                },
+
+                getUniqueValues(key) {
+                    const vals = this.masterData.map(d => d[key]).filter(v => v);
+                    return [...new Set(vals)].sort();
+                },
+
+                resetFilters() {
+                    for (let key in this.activeFilters) this.activeFilters[key] = "";
+                },
+
+                get filteredData() {
+                    return this.masterData.filter(item => {
+                        for (let key of this.configFilters) {
+                            if (this.activeFilters[key] && item[key] !== this.activeFilters[key]) return false;
+                        }
+                        return true;
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
