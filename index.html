@@ -3,127 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Distribucion Kits Escolares 2025</title>
+    <title>TMS | Distribucion Kits Escolares 2025</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
-        .nav-item { transition: all 0.2s ease-in-out; }
-        .nav-item:hover { background-color: rgba(255,255,255,0.1); }
-        .nav-item.active { background-color: rgba(255,255,255,0.2); border-left: 4px solid #FCD34D; }
+        
+        /* Efecto Sutil de Mapa para el Login */
+        .bg-logistics {
+            background-color: #0f172a;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Scrollbar fina */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 h-screen overflow-hidden flex">
+<body class="bg-gray-50 text-slate-800 h-screen overflow-hidden flex selection:bg-blue-100">
 
-    <div x-data="dashboardApp()" x-cloak class="flex w-full h-full">
+    <div x-data="tmsApp()" x-cloak class="flex w-full h-full">
 
-        <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-20" x-show="loggedIn">
+        <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-logistics flex items-center justify-center p-4">
             
-            <div class="p-6 border-b border-slate-700 text-center">
-                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-3 flex items-center justify-center shadow-lg">
-                    <span class="text-3xl">🚀</span>
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex overflow-hidden border border-slate-700">
+                
+                <div class="hidden md:flex w-1/2 bg-slate-900 flex-col justify-between p-12 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-indigo-600 rounded-full opacity-20 blur-2xl"></div>
+
+                    <div class="z-10">
+                        <div class="flex items-center gap-2 mb-6">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <span class="font-bold text-xl tracking-wide">JL ConsulTIC</span>
+                        </div>
+                        <h2 class="text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Plataforma centralizada para el monitoreo de envíos, evidencias y análisis de datos en tiempo real.
+                        </p>
+                    </div>
+                    
+                    <div class="text-xs text-slate-500 z-10">
+                        &copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.0
+                    </div>
                 </div>
-                <h2 class="text-lg font-bold leading-tight text-white tracking-wide">
-                    JL ConsulTIC
-                </h2>
-                <p class="text-xs text-slate-400 mt-1">Gestión Inteligente de Datos</p>
+
+                <div class="w-full md:w-1/2 p-12 flex flex-col justify-center bg-white relative">
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-slate-800">Bienvenido</h3>
+                        <p class="text-sm text-slate-500">Ingrese sus credenciales corporativas</p>
+                    </div>
+
+                    <form @submit.prevent="login">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-3 text-slate-400">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                                    </span>
+                                    <input type="email" x-model="emailInput" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="usuario@empresa.com" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-3 text-slate-400">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    </span>
+                                    <input type="password" x-model="passwordInput" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="••••••••" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div x-show="errorMsg" x-transition class="mt-4 p-3 rounded-lg bg-red-50 border border-red-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="text-xs text-red-600 font-medium" x-text="errorMsg"></span>
+                        </div>
+
+                        <button type="submit" :disabled="loading" class="w-full mt-8 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex justify-center items-center gap-2">
+                            <span x-show="!loading">Ingresar al Sistema</span>
+                            <span x-show="loading" class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20" x-show="loggedIn">
+            <div class="p-6 border-b border-slate-800 flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white leading-none">JL ConsulTIC</h1>
+                    <span class="text-[10px] uppercase tracking-wider font-semibold text-blue-400">TMS Dashboard</span>
+                </div>
             </div>
 
-            <nav class="flex-1 py-6 px-2 space-y-2">
+            <div class="px-4 py-6">
+                <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block">Proyecto Activo</label>
+                <div class="space-y-2">
+                    <button @click="switchProject('item5')" 
+                            class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
+                            :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                        <span class="text-sm font-medium">📦 Item 5</span>
+                        <div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                    </button>
+                    
+                    <button @click="switchProject('item14')" 
+                            class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
+                            :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                        <span class="text-sm font-medium">🚚 Item 14 (Masivo)</span>
+                        <div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                    </button>
+                </div>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-1">
+                <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block mt-4">Navegación</label>
+                
                 <button @click="changeView('metrics')" 
-                        :class="currentView === 'metrics' ? 'active' : ''"
-                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium">
-                    <span>📊</span> Métricas de Entrega
+                        :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    Métricas KPI
                 </button>
 
                 <button @click="changeView('viewer')" 
-                        :class="currentView === 'viewer' ? 'active' : ''"
-                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium">
-                    <span>📦</span> Visor de Evidencias
+                        :class="currentView === 'viewer' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    Visor de Evidencias
                 </button>
             </nav>
 
-            <div class="p-4 border-t border-slate-700 bg-slate-800">
-                <div class="text-xs text-slate-400 mb-2">Conectado como:</div>
-                <div class="text-sm font-bold text-white mb-3 truncate" x-text="emailInput"></div>
-                <button @click="logout" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded transition">
+            <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">U</div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs text-slate-400">Conectado como</p>
+                        <p class="text-xs font-bold text-white truncate w-32" x-text="emailInput"></p>
+                    </div>
+                </div>
+                <button @click="logout" class="w-full py-2 border border-slate-700 rounded text-xs text-slate-400 hover:text-white hover:border-slate-500 transition">
                     Cerrar Sesión
                 </button>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
+            
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shadow-sm z-10">
+                <h2 class="text-lg font-bold text-slate-800" x-text="projectTitle"></h2>
+                <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                    <span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span> Sistema Operativo
+                </div>
+            </header>
 
-            <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-gray-200 flex items-center justify-center p-4">
-                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm border border-gray-300">
-                    <div class="text-center mb-8">
-                        <h1 class="text-2xl font-bold text-slate-800">JL ConsulTIC</h1>
-                        <p class="text-sm text-gray-500">Acceso Seguro al Sistema</p>
-                    </div>
-                    
-                    <form @submit.prevent="login">
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Correo Electrónico</label>
-                            <input type="email" x-model="emailInput" 
-                                   class="w-full border p-3 rounded bg-gray-50 focus:ring-2 focus:ring-slate-500 outline-none transition" 
-                                   placeholder="usuario@ejemplo.com" required>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Contraseña</label>
-                            <input type="password" x-model="passwordInput" 
-                                   class="w-full border p-3 rounded bg-gray-50 focus:ring-2 focus:ring-slate-500 outline-none transition" 
-                                   placeholder="••••••••" required>
-                        </div>
-                        
-                        <div x-show="errorMsg" class="mb-4 text-red-600 text-xs bg-red-50 p-3 rounded border border-red-100 text-center flex items-center justify-center gap-2">
-                            <span>⚠️</span> <span x-text="errorMsg"></span>
-                        </div>
-
-                        <button type="submit" :disabled="loading" 
-                                class="w-full bg-slate-900 text-white font-bold py-3 rounded hover:bg-slate-800 transition shadow-lg disabled:opacity-50 flex justify-center items-center">
-                            <span x-show="!loading">Ingresar al Sistema</span>
-                            <span x-show="loading" class="animate-pulse">Validando credenciales...</span>
-                        </button>
-                    </form>
-                    
-                    <div class="mt-6 text-center text-xs text-gray-400">
-                        &copy; 2025 JL ConsulTIC & CISAC. Todos los derechos reservados.
-                    </div>
+            <div x-show="loadingData" class="absolute inset-0 z-40 bg-white/80 flex items-center justify-center backdrop-blur-sm">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div>
+                    <p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando datos...</p>
                 </div>
             </div>
 
-            <div x-show="loggedIn" class="flex-1 overflow-y-auto p-8">
+            <div class="flex-1 overflow-y-auto p-8" x-show="!loadingData">
                 
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Tablero de Control</h2>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-slate-600">
-                            <p class="text-xs text-gray-400 uppercase font-bold">Total Registros</p>
-                            <p class="text-3xl font-bold text-slate-800" x-text="masterData.length"></p>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registros</p>
+                            <p class="text-3xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-                            <p class="text-xs text-gray-400 uppercase font-bold">Entregados</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="countStatus('Entregado')"></p>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-1 h-full bg-green-500"></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entregas Confirmadas</p>
+                            <p class="text-3xl font-bold text-green-600 mt-2" x-text="countStatus('Entregado')"></p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
-                            <p class="text-xs text-gray-400 uppercase font-bold">En Ruta</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="countStatus('En Ruta')"></p>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-1 h-full bg-orange-500"></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">En Ruta / Pendiente</p>
+                            <p class="text-3xl font-bold text-orange-500 mt-2" x-text="countStatus('En Ruta')"></p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h3 class="text-sm font-bold text-gray-600 mb-4 text-center">Estado General</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-blue-600 rounded-full"></span> Status General
+                            </h3>
                             <div class="h-64 relative"><canvas id="chart-status"></canvas></div>
                         </div>
+                        
                         <template x-for="(conf, index) in configStats" :key="index">
-                            <div class="bg-white p-4 rounded-lg shadow">
-                                <h3 class="text-sm font-bold text-gray-600 mb-4 text-center" x-text="conf.label"></h3>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
+                                    <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 
+                                    <span x-text="conf.label"></span>
+                                </h3>
                                 <div class="h-64 relative"><canvas :id="'chart-dynamic-' + index"></canvas></div>
                             </div>
                         </template>
@@ -131,58 +218,62 @@
                 </div>
 
                 <div x-show="currentView === 'viewer'" x-transition.opacity>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Visor de Evidencias</h2>
-
-                    <div class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <template x-for="filterName in configFilters" :key="filterName">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" x-text="filterName"></label>
-                                <select x-model="activeFilters[filterName]" class="w-full border p-2 rounded text-sm bg-gray-50 focus:ring-1 focus:ring-slate-500">
-                                    <option value="">Todos</option>
-                                    <template x-for="val in getUniqueValues(filterName)" :key="val">
-                                        <option :value="val" x-text="val"></option>
-                                    </template>
-                                </select>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <template x-for="filterName in configFilters" :key="filterName">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1" x-text="filterName"></label>
+                                    <select x-model="activeFilters[filterName]" class="w-full border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                                        <option value="">Todos</option>
+                                        <template x-for="val in getUniqueValues(filterName)" :key="val">
+                                            <option :value="val" x-text="val"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </template>
+                            <div class="flex items-end">
+                                <button @click="resetFilters" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">↺ Limpiar Filtros</button>
                             </div>
-                        </template>
-                        <div class="flex items-end">
-                            <button @click="resetFilters" class="text-sm text-slate-600 hover:text-slate-900 font-bold mb-2">↺ Limpiar filtros</button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                         <template x-for="item in filteredData" :key="item.id">
-                            <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden border border-gray-200 flex flex-col relative">
-                                
-                                <div class="absolute top-3 right-3 z-10">
-                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase border"
-                                          :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-orange-100 text-orange-800 border-orange-200'"
-                                          x-text="item.computedStatus">
-                                    </span>
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden group">
+                                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-start">
+                                    <div>
+                                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1"
+                                              :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'"
+                                              x-text="item.computedStatus"></span>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p>
+                                        <p class="text-xs font-bold text-slate-700" x-text="item[configInfo[0]] || '-'"></p>
+                                    </div>
                                 </div>
 
-                                <div class="p-4 border-b bg-gray-50 pt-8">
-                                    <template x-for="header in configInfo" :key="header">
-                                        <div class="mb-2">
-                                            <p class="text-[10px] text-gray-400 uppercase font-bold" x-text="header"></p>
-                                            <h3 class="text-sm font-semibold text-gray-800 truncate" x-text="item[header] || '-'"></h3>
+                                <div class="p-4 flex-1">
+                                    <template x-for="(header, idx) in configInfo" :key="header">
+                                        <div class="mb-2" x-show="idx > 0">
+                                            <p class="text-[10px] text-slate-400 font-bold uppercase" x-text="header"></p>
+                                            <p class="text-sm text-slate-800 truncate" x-text="item[header] || '-'"></p>
                                         </div>
                                     </template>
                                 </div>
 
-                                <div class="p-4 flex flex-col gap-2 flex-grow">
+                                <div class="p-4 bg-slate-50 border-t border-slate-100">
                                     <template x-if="item.images.length > 0">
-                                        <div>
+                                        <div class="flex flex-wrap gap-2">
                                             <template x-for="img in item.images" :key="img.label">
-                                                <a :href="img.url" target="_blank" class="mb-2 block w-full text-center bg-slate-50 text-slate-700 font-medium py-2 px-3 rounded text-xs hover:bg-slate-100 flex justify-center items-center gap-2 border border-slate-200">
-                                                    <span>📎</span> <span x-text="img.label"></span>
+                                                <a :href="img.url" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1">
+                                                    📎 <span x-text="img.label"></span>
                                                 </a>
                                             </template>
                                         </div>
                                     </template>
                                     <template x-if="item.images.length === 0">
-                                        <div class="h-full flex items-center justify-center p-4">
-                                            <p class="text-xs text-orange-400 italic bg-orange-50 px-3 py-1 rounded-full">Sin evidencias</p>
+                                        <div class="text-center py-2">
+                                            <span class="text-xs text-slate-400 italic">Sin documentación adjunta</span>
                                         </div>
                                     </template>
                                 </div>
@@ -191,91 +282,124 @@
                     </div>
                 </div>
 
-                <footer class="mt-10 py-6 text-center border-t border-gray-200">
-                    <p class="text-xs text-gray-400">
-                        Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC & CISAC</span>.
-                    </p>
+                <footer class="mt-12 py-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+                    <div>
+                        Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC & CISAC</span> &copy; 2025
+                    </div>
+                    <div class="flex gap-4">
+                        <span>Soporte</span>
+                        <span>Privacidad</span>
+                        <span>Términos</span>
+                    </div>
                 </footer>
+
             </div>
         </main>
     </div>
 
     <script>
-        // =================================================================
+        // ==========================================
         // CONFIGURACIÓN DE CONEXIÓN
-        // =================================================================
-        
-        // 1. Reemplaza esta URL con la que te da Google Apps Script al Implantar
-        const API_URL = 'https://script.google.com/macros/s/AKfycbz8BUT2xbk58hH-o_1MQTrt4BLNGguGh0iPjM7p0Mv-__uS5nkg16l2ce1augFxrWLvfQ/exec';
-        
-        // 2. Token de Seguridad (Debe ser idéntico al que está en el archivo Code.gs)
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycby...TU_URL_AQUI.../exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
-        function dashboardApp() {
+        function tmsApp() {
             return {
                 loggedIn: false,
-                loading: false,
+                loading: false, // Login loading
+                loadingData: false, // Project switch loading
                 emailInput: '',
-                passwordInput: '', // Nuevo campo para guardar contraseña temporalmente
+                passwordInput: '',
                 errorMsg: '',
                 
+                // App State
+                activeProject: 'item5', // 'item5' or 'item14'
                 currentView: 'metrics',
+                
+                // Data
                 masterData: [],
                 configFilters: [],
                 configInfo: [],
                 configStats: [],
                 activeFilters: {},
                 chartsInstances: [],
-
-                init() {
-                    // Nota: Por seguridad, en esta versión NO guardamos la contraseña en localStorage
-                    // Si el usuario refresca la página, tendrá que loguearse de nuevo.
-                    // Esto es más seguro para datos sensibles.
+                
+                // Computed Title
+                get projectTitle() {
+                    return this.activeProject === 'item5' 
+                        ? 'Proyecto: Distribución Item 5' 
+                        : 'Proyecto: Masivo Item 14';
                 },
 
+                init() {
+                    // Check local storage for session persistence if desired (optional)
+                },
+
+                // 1. LOGIN PROCESS
                 async login() {
                     this.loading = true;
                     this.errorMsg = '';
                     
                     try {
-                        // Construimos la URL con Email, Password y Token
-                        // encodeURIComponent es vital para evitar errores si la contraseña tiene símbolos
-                        const url = `${API_URL}?email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&token=${encodeURIComponent(API_TOKEN)}`;
-                        
-                        const res = await fetch(url);
-                        const json = await res.json();
-
-                        if (json.status === 'success') {
-                            this.configFilters = json.config.filters;
-                            this.configInfo = json.config.info;
-                            this.configStats = json.config.stats;
-                            
-                            this.masterData = json.data.map(item => ({
-                                ...item,
-                                computedStatus: (item.images && item.images.length > 0) ? 'Entregado' : 'En Ruta'
-                            }));
-                            
-                            this.configFilters.forEach(f => {
-                                if (!(f in this.activeFilters)) this.activeFilters[f] = "";
-                            });
-
-                            this.loggedIn = true;
-                            // Limpiamos la contraseña de la memoria visual por seguridad
-                            this.passwordInput = ''; 
-                            
-                            this.$nextTick(() => {
-                                this.renderAllCharts();
-                            });
-
-                        } else {
-                            this.errorMsg = json.message;
-                            this.logout();
-                        }
+                        // First load default project (item5)
+                        await this.fetchProjectData('item5');
+                        this.loggedIn = true;
+                        this.activeProject = 'item5';
+                        this.passwordInput = ''; // Clear for security
                     } catch (e) {
-                        this.errorMsg = 'No se pudo conectar con el servidor.';
-                        console.error(e);
+                        this.errorMsg = e.message || 'Error de conexión';
                     } finally {
                         this.loading = false;
+                    }
+                },
+
+                // 2. SWITCH PROJECT
+                async switchProject(projectKey) {
+                    if (this.activeProject === projectKey) return;
+                    this.activeProject = projectKey;
+                    this.loadingData = true;
+                    
+                    try {
+                        await this.fetchProjectData(projectKey);
+                    } catch (e) {
+                        console.error(e);
+                        alert('Error cargando el proyecto: ' + e.message);
+                    } finally {
+                        this.loadingData = false;
+                    }
+                },
+
+                // 3. CORE FETCH LOGIC
+                async fetchProjectData(projectKey) {
+                    const url = `${API_URL}?token=${encodeURIComponent(API_TOKEN)}&email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&dataset=${projectKey}`;
+                    
+                    const res = await fetch(url);
+                    const json = await res.json();
+
+                    if (json.status === 'success') {
+                        // Update Configs
+                        this.configFilters = json.config.filters;
+                        this.configInfo = json.config.info;
+                        this.configStats = json.config.stats;
+                        
+                        // Process Data
+                        this.masterData = json.data.map(item => ({
+                            ...item,
+                            computedStatus: (item.images && item.images.length > 0) ? 'Entregado' : 'En Ruta'
+                        }));
+                        
+                        // Reset Filters
+                        this.activeFilters = {};
+                        this.configFilters.forEach(f => this.activeFilters[f] = "");
+
+                        // Render Charts (wait for DOM)
+                        this.$nextTick(() => {
+                            if (this.currentView === 'metrics') this.renderAllCharts();
+                        });
+
+                    } else {
+                        throw new Error(json.message || 'Error desconocido del servidor');
                     }
                 },
 
@@ -284,6 +408,7 @@
                     this.masterData = [];
                     this.emailInput = '';
                     this.passwordInput = '';
+                    this.chartsInstances.forEach(c => c.destroy());
                 },
 
                 changeView(view) {
@@ -293,15 +418,14 @@
                     }
                 },
 
+                // --- DATA UTILS ---
                 getUniqueValues(key) {
                     const vals = this.masterData.map(d => d[key]).filter(v => v && v !== 'Sin Dato');
                     return [...new Set(vals)].sort();
                 },
-
                 resetFilters() {
                     for (let key in this.activeFilters) this.activeFilters[key] = "";
                 },
-
                 get filteredData() {
                     return this.masterData.filter(item => {
                         for (let key of this.configFilters) {
@@ -310,24 +434,23 @@
                         return true;
                     });
                 },
-
                 countStatus(status) {
                     return this.masterData.filter(d => d.computedStatus === status).length;
                 },
 
+                // --- CHARTS ---
                 renderAllCharts() {
                     this.chartsInstances.forEach(c => c.destroy());
                     this.chartsInstances = [];
 
-                    // Gráfico Status
-                    this.renderChart(
-                        'chart-status', 'doughnut', 
+                    // Status Chart
+                    this.renderChart('chart-status', 'doughnut', 
                         ['Entregado', 'En Ruta'], 
                         [this.countStatus('Entregado'), this.countStatus('En Ruta')],
-                        ['#10B981', '#F97316']
+                        ['#22c55e', '#f97316']
                     );
 
-                    // Gráficos Dinámicos
+                    // Dynamic Charts
                     this.configStats.forEach((conf, idx) => {
                         const counts = {};
                         this.masterData.forEach(item => {
@@ -336,7 +459,8 @@
                         });
                         const labels = Object.keys(counts);
                         const data = Object.values(counts);
-                        const colors = labels.map((_, i) => `hsl(${210 + (i * 20)}, 70%, 50%)`); // Tonos azules
+                        // Blue palette generator
+                        const colors = labels.map((_, i) => `hsl(${210 + (i * 10)}, ${70}%, ${50 - (i%2)*10}%)`);
 
                         this.renderChart(`chart-dynamic-${idx}`, conf.type, labels, data, colors);
                     });
@@ -345,6 +469,7 @@
                 renderChart(canvasId, type, labels, data, colors) {
                     const ctx = document.getElementById(canvasId);
                     if (!ctx) return;
+                    
                     const chart = new Chart(ctx, {
                         type: type,
                         data: {
@@ -352,15 +477,20 @@
                             datasets: [{
                                 data: data,
                                 backgroundColor: colors,
-                                borderWidth: 0
+                                borderWidth: 0,
+                                borderRadius: 4
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } }
-                            }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: {size: 10} } }
+                            },
+                            scales: type === 'bar' ? {
+                                y: { beginAtZero: true, grid: { display: false } },
+                                x: { grid: { display: false } }
+                            } : { display: false }
                         }
                     });
                     this.chartsInstances.push(chart);
