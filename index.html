@@ -182,7 +182,7 @@
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registros</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Entregas</p>
                             <p class="text-3xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
@@ -329,7 +329,7 @@
                 get projectTitle() {
                     return this.activeProject === 'item5' 
                         ? 'Proyecto: Distribución Item 5' 
-                        : 'Proyecto: Masivo Item 14';
+                        : 'Proyecto: Distribución Item 14';
                 },
 
                 init() {
