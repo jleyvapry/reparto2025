@@ -116,14 +116,14 @@
                     <button @click="switchProject('item5')" 
                             class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
                             :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
-                        <span class="text-sm font-medium">📦 Item 5</span>
+                        <span class="text-sm font-medium">🚚 Item 5</span>
                         <div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
                     </button>
                     
                     <button @click="switchProject('item14')" 
                             class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
                             :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
-                        <span class="text-sm font-medium">🚚 Item 14 (Masivo)</span>
+                        <span class="text-sm font-medium">🚚 Item 14</span>
                         <div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
                     </button>
                 </div>
@@ -136,7 +136,7 @@
                         :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'"
                         class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
                     <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                    Métricas KPI
+                    Estadisticas
                 </button>
 
                 <button @click="changeView('viewer')" 
@@ -346,7 +346,6 @@
                         await this.fetchProjectData('item5');
                         this.loggedIn = true;
                         this.activeProject = 'item5';
-                        this.passwordInput = ''; // Clear for security
                     } catch (e) {
                         this.errorMsg = e.message || 'Error de conexión';
                     } finally {
