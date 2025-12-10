@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicio de Transporte - MINEDU 2025</title>
+    <title>Dashboard - JL ConsulTIC</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -11,7 +11,6 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        /* Transición suave para el menú */
         .nav-item { transition: all 0.2s ease-in-out; }
         .nav-item:hover { background-color: rgba(255,255,255,0.1); }
         .nav-item.active { background-color: rgba(255,255,255,0.2); border-left: 4px solid #FCD34D; }
@@ -21,41 +20,36 @@
 
     <div x-data="dashboardApp()" x-cloak class="flex w-full h-full">
 
-        <aside class="w-64 bg-blue-900 text-white flex flex-col shadow-2xl z-20" x-show="loggedIn">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-20" x-show="loggedIn">
             
-            <div class="p-6 border-b border-blue-800 text-center">
-                
-                <div class="w-24 h-24 mx-auto mb-3 bg-white rounded-full flex items-center justify-center overflow-hidden p-2">
-                    <img src="https://via.placeholder.com/150?text=LOGO" 
-                         alt="Logo de la Empresa" 
-                         class="w-full h-full object-contain">
+            <div class="p-6 border-b border-slate-700 text-center">
+                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-3 flex items-center justify-center shadow-lg">
+                    <span class="text-3xl">🚀</span>
                 </div>
-
-                <h2 class="text-sm font-bold leading-tight text-blue-100 uppercase">
-                    Servicio de Transporte<br>y Distribución
+                <h2 class="text-lg font-bold leading-tight text-white tracking-wide">
+                    JL ConsulTIC
                 </h2>
-                <p class="text-xs text-blue-300 mt-1">Kits Escolares MINEDU 2025</p>
+                <p class="text-xs text-slate-400 mt-1">Gestión Inteligente de Datos</p>
             </div>
 
             <nav class="flex-1 py-6 px-2 space-y-2">
                 <button @click="changeView('metrics')" 
                         :class="currentView === 'metrics' ? 'active' : ''"
-                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium transition-colors hover:bg-blue-800">
+                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium">
                     <span>📊</span> Métricas de Entrega
                 </button>
 
                 <button @click="changeView('viewer')" 
                         :class="currentView === 'viewer' ? 'active' : ''"
-                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium transition-colors hover:bg-blue-800">
+                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm font-medium">
                     <span>📦</span> Visor de Evidencias
                 </button>
             </nav>
 
-            <div class="p-4 border-t border-blue-800">
-                <div class="text-xs text-blue-300 mb-2">
-                    Usuario: <span x-text="emailInput" class="font-bold text-white"></span>
-                </div>
-                <button @click="logout" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded transition shadow">
+            <div class="p-4 border-t border-slate-700 bg-slate-800">
+                <div class="text-xs text-slate-400 mb-2">Conectado como:</div>
+                <div class="text-sm font-bold text-white mb-3 truncate" x-text="emailInput"></div>
+                <button @click="logout" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded transition">
                     Cerrar Sesión
                 </button>
             </div>
@@ -63,22 +57,42 @@
 
         <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
 
-            <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-gray-100 flex items-center justify-center p-4">
-                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-200">
-                    <div class="text-center mb-6">
-                        <h1 class="text-xl font-bold text-blue-900">Acceso al Sistema</h1>
-                        <p class="text-sm text-gray-500">Kits Escolares MINEDU 2025</p>
+            <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-gray-200 flex items-center justify-center p-4">
+                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm border border-gray-300">
+                    <div class="text-center mb-8">
+                        <h1 class="text-2xl font-bold text-slate-800">JL ConsulTIC</h1>
+                        <p class="text-sm text-gray-500">Acceso Seguro al Sistema</p>
                     </div>
+                    
                     <form @submit.prevent="login">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Autorizado</label>
-                        <input type="email" x-model="emailInput" class="w-full border p-3 rounded mb-4 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="nombre@empresa.com" required>
-                        
-                        <div x-show="errorMsg" class="mb-4 text-red-600 text-xs bg-red-50 p-3 rounded border border-red-100 text-center" x-text="errorMsg"></div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Correo Electrónico</label>
+                            <input type="email" x-model="emailInput" 
+                                   class="w-full border p-3 rounded bg-gray-50 focus:ring-2 focus:ring-slate-500 outline-none transition" 
+                                   placeholder="usuario@ejemplo.com" required>
+                        </div>
 
-                        <button type="submit" :disabled="loading" class="w-full bg-blue-900 text-white font-bold py-3 rounded hover:bg-blue-800 transition shadow-lg disabled:opacity-50">
-                            <span x-text="loading ? 'Verificando...' : 'Ingresar al Dashboard'"></span>
+                        <div class="mb-6">
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Contraseña</label>
+                            <input type="password" x-model="passwordInput" 
+                                   class="w-full border p-3 rounded bg-gray-50 focus:ring-2 focus:ring-slate-500 outline-none transition" 
+                                   placeholder="••••••••" required>
+                        </div>
+                        
+                        <div x-show="errorMsg" class="mb-4 text-red-600 text-xs bg-red-50 p-3 rounded border border-red-100 text-center flex items-center justify-center gap-2">
+                            <span>⚠️</span> <span x-text="errorMsg"></span>
+                        </div>
+
+                        <button type="submit" :disabled="loading" 
+                                class="w-full bg-slate-900 text-white font-bold py-3 rounded hover:bg-slate-800 transition shadow-lg disabled:opacity-50 flex justify-center items-center">
+                            <span x-show="!loading">Ingresar al Sistema</span>
+                            <span x-show="loading" class="animate-pulse">Validando credenciales...</span>
                         </button>
                     </form>
+                    
+                    <div class="mt-6 text-center text-xs text-gray-400">
+                        &copy; 2025 JL ConsulTIC & CISAC. Todos los derechos reservados.
+                    </div>
                 </div>
             </div>
 
@@ -88,9 +102,9 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Tablero de Control</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
+                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-slate-600">
                             <p class="text-xs text-gray-400 uppercase font-bold">Total Registros</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="masterData.length"></p>
+                            <p class="text-3xl font-bold text-slate-800" x-text="masterData.length"></p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
                             <p class="text-xs text-gray-400 uppercase font-bold">Entregados</p>
@@ -104,18 +118,13 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-white p-4 rounded-lg shadow">
-                            <h3 class="text-sm font-bold text-gray-600 mb-4 text-center">Estado General de Entregas</h3>
-                            <div class="h-64 relative">
-                                <canvas id="chart-status"></canvas>
-                            </div>
+                            <h3 class="text-sm font-bold text-gray-600 mb-4 text-center">Estado General</h3>
+                            <div class="h-64 relative"><canvas id="chart-status"></canvas></div>
                         </div>
-
                         <template x-for="(conf, index) in configStats" :key="index">
                             <div class="bg-white p-4 rounded-lg shadow">
                                 <h3 class="text-sm font-bold text-gray-600 mb-4 text-center" x-text="conf.label"></h3>
-                                <div class="h-64 relative">
-                                    <canvas :id="'chart-dynamic-' + index"></canvas>
-                                </div>
+                                <div class="h-64 relative"><canvas :id="'chart-dynamic-' + index"></canvas></div>
                             </div>
                         </template>
                     </div>
@@ -128,7 +137,7 @@
                         <template x-for="filterName in configFilters" :key="filterName">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1" x-text="filterName"></label>
-                                <select x-model="activeFilters[filterName]" class="w-full border p-2 rounded text-sm bg-gray-50">
+                                <select x-model="activeFilters[filterName]" class="w-full border p-2 rounded text-sm bg-gray-50 focus:ring-1 focus:ring-slate-500">
                                     <option value="">Todos</option>
                                     <template x-for="val in getUniqueValues(filterName)" :key="val">
                                         <option :value="val" x-text="val"></option>
@@ -137,7 +146,7 @@
                             </div>
                         </template>
                         <div class="flex items-end">
-                            <button @click="resetFilters" class="text-sm text-blue-600 hover:underline mb-2">Limpiar filtros</button>
+                            <button @click="resetFilters" class="text-sm text-slate-600 hover:text-slate-900 font-bold mb-2">↺ Limpiar filtros</button>
                         </div>
                     </div>
 
@@ -154,9 +163,9 @@
 
                                 <div class="p-4 border-b bg-gray-50 pt-8">
                                     <template x-for="header in configInfo" :key="header">
-                                        <div>
-                                            <p class="text-xs text-gray-500 uppercase font-bold" x-text="header"></p>
-                                            <h3 class="text-sm font-semibold text-gray-800 mb-2 truncate" x-text="item[header] || '-'"></h3>
+                                        <div class="mb-2">
+                                            <p class="text-[10px] text-gray-400 uppercase font-bold" x-text="header"></p>
+                                            <h3 class="text-sm font-semibold text-gray-800 truncate" x-text="item[header] || '-'"></h3>
                                         </div>
                                     </template>
                                 </div>
@@ -165,15 +174,15 @@
                                     <template x-if="item.images.length > 0">
                                         <div>
                                             <template x-for="img in item.images" :key="img.label">
-                                                <a :href="img.url" target="_blank" class="mb-2 block w-full text-center bg-blue-50 text-blue-600 font-medium py-2 px-3 rounded text-sm hover:bg-blue-100 flex justify-center items-center gap-2">
-                                                    <span>📷</span> <span x-text="img.label"></span>
+                                                <a :href="img.url" target="_blank" class="mb-2 block w-full text-center bg-slate-50 text-slate-700 font-medium py-2 px-3 rounded text-xs hover:bg-slate-100 flex justify-center items-center gap-2 border border-slate-200">
+                                                    <span>📎</span> <span x-text="img.label"></span>
                                                 </a>
                                             </template>
                                         </div>
                                     </template>
                                     <template x-if="item.images.length === 0">
                                         <div class="h-full flex items-center justify-center p-4">
-                                            <p class="text-xs text-orange-400 italic bg-orange-50 px-3 py-1 rounded-full">Pendiente de carga</p>
+                                            <p class="text-xs text-orange-400 italic bg-orange-50 px-3 py-1 rounded-full">Sin evidencias</p>
                                         </div>
                                     </template>
                                 </div>
@@ -182,170 +191,58 @@
                     </div>
                 </div>
 
+                <footer class="mt-10 py-6 text-center border-t border-gray-200">
+                    <p class="text-xs text-gray-400">
+                        Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC</span>.
+                    </p>
+                </footer>
             </div>
-            <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
-
-            <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-gray-100 flex items-center justify-center p-4">
-               <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-200">
-                    <div class="text-center mb-6">
-                        <h1 class="text-xl font-bold text-blue-900">Acceso al Sistema</h1>
-                        <p class="text-sm text-gray-500">Kits Escolares MINEDU 2025</p>
-                    </div>
-                    <form @submit.prevent="login">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Autorizado</label>
-                        <input type="email" x-model="emailInput" class="w-full border p-3 rounded mb-4 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="nombre@empresa.com" required>
-                        
-                        <div x-show="errorMsg" class="mb-4 text-red-600 text-xs bg-red-50 p-3 rounded border border-red-100 text-center" x-text="errorMsg"></div>
-
-                        <button type="submit" :disabled="loading" class="w-full bg-blue-900 text-white font-bold py-3 rounded hover:bg-blue-800 transition shadow-lg disabled:opacity-50">
-                            <span x-text="loading ? 'Verificando...' : 'Ingresar al Dashboard'"></span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div x-show="loggedIn" class="flex-1 overflow-y-auto p-8">
-                
-                <div x-show="currentView === 'metrics'" x-transition.opacity>
-                   <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Tablero de Control</h2>
-                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-                            <p class="text-xs text-gray-400 uppercase font-bold">Total Registros</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="masterData.length"></p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-                            <p class="text-xs text-gray-400 uppercase font-bold">Entregados</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="countStatus('Entregado')"></p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
-                            <p class="text-xs text-gray-400 uppercase font-bold">En Ruta</p>
-                            <p class="text-3xl font-bold text-gray-800" x-text="countStatus('En Ruta')"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h3 class="text-sm font-bold text-gray-600 mb-4 text-center">Estado General de Entregas</h3>
-                            <div class="h-64 relative"><canvas id="chart-status"></canvas></div>
-                        </div>
-                        <template x-for="(conf, index) in configStats" :key="index">
-                            <div class="bg-white p-4 rounded-lg shadow">
-                                <h3 class="text-sm font-bold text-gray-600 mb-4 text-center" x-text="conf.label"></h3>
-                                <div class="h-64 relative"><canvas :id="'chart-dynamic-' + index"></canvas></div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                <div x-show="currentView === 'viewer'" x-transition.opacity>
-                   <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Visor de Evidencias</h2>
-                   
-                   <div class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <template x-for="filterName in configFilters" :key="filterName">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" x-text="filterName"></label>
-                                <select x-model="activeFilters[filterName]" class="w-full border p-2 rounded text-sm bg-gray-50">
-                                    <option value="">Todos</option>
-                                    <template x-for="val in getUniqueValues(filterName)" :key="val">
-                                        <option :value="val" x-text="val"></option>
-                                    </template>
-                                </select>
-                            </div>
-                        </template>
-                        <div class="flex items-end">
-                            <button @click="resetFilters" class="text-sm text-blue-600 hover:underline mb-2">Limpiar filtros</button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <template x-for="item in filteredData" :key="item.id">
-                            <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden border border-gray-200 flex flex-col relative">
-                                <div class="absolute top-3 right-3 z-10">
-                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase border"
-                                          :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-orange-100 text-orange-800 border-orange-200'"
-                                          x-text="item.computedStatus">
-                                    </span>
-                                </div>
-                                <div class="p-4 border-b bg-gray-50 pt-8">
-                                    <template x-for="header in configInfo" :key="header">
-                                        <div>
-                                            <p class="text-xs text-gray-500 uppercase font-bold" x-text="header"></p>
-                                            <h3 class="text-sm font-semibold text-gray-800 mb-2 truncate" x-text="item[header] || '-'"></h3>
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="p-4 flex flex-col gap-2 flex-grow">
-                                    <template x-if="item.images.length > 0">
-                                        <div>
-                                            <template x-for="img in item.images" :key="img.label">
-                                                <a :href="img.url" target="_blank" class="mb-2 block w-full text-center bg-blue-50 text-blue-600 font-medium py-2 px-3 rounded text-sm hover:bg-blue-100 flex justify-center items-center gap-2">
-                                                    <span>📷</span> <span x-text="img.label"></span>
-                                                </a>
-                                            </template>
-                                        </div>
-                                    </template>
-                                    <template x-if="item.images.length === 0">
-                                        <div class="h-full flex items-center justify-center p-4">
-                                            <p class="text-xs text-orange-400 italic bg-orange-50 px-3 py-1 rounded-full">Pendiente de carga</p>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-            </div>
-
-            <footer x-show="loggedIn" class="p-3 bg-gray-100 text-center border-t border-gray-200">
-                <p class="text-[10px] text-gray-400 font-medium tracking-wide">
-                    Desarrollo de <span class="text-gray-500 font-bold">JL ConsulTIC</span> en colaboración con <span class="text-gray-500 font-bold">CISAC</span>
-                </p>
-            </footer>
-
-        </main>
         </main>
     </div>
 
     <script>
-        // ==========================================================
-        // CONFIGURACIÓN: CAMBIAR URL AQUÍ
-        // ==========================================================
+        // =================================================================
+        // CONFIGURACIÓN DE CONEXIÓN
+        // =================================================================
+        
+        // 1. Reemplaza esta URL con la que te da Google Apps Script al Implantar
         const API_URL = 'https://script.google.com/macros/s/AKfycbw4iAm_QaYkwxyvIjmzdkv0Og13R4fPyDRWhmU0qb5MQzYkU2TykO-OmtbP4Lxa8eBvvw/exec';
+        
+        // 2. Token de Seguridad (Debe ser idéntico al que está en el archivo Code.gs)
+        const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
         function dashboardApp() {
             return {
                 loggedIn: false,
                 loading: false,
                 emailInput: '',
+                passwordInput: '', // Nuevo campo para guardar contraseña temporalmente
                 errorMsg: '',
                 
-                // Vistas
-                currentView: 'metrics', // 'metrics' o 'viewer'
-
-                // Datos
+                currentView: 'metrics',
                 masterData: [],
                 configFilters: [],
                 configInfo: [],
                 configStats: [],
                 activeFilters: {},
-                
-                // Variables para guardar las instancias de los gráficos y destruirlos al recargar
                 chartsInstances: [],
 
                 init() {
-                    const savedUser = localStorage.getItem('app_user_v2');
-                    if (savedUser) {
-                        this.emailInput = savedUser;
-                        this.login();
-                    }
+                    // Nota: Por seguridad, en esta versión NO guardamos la contraseña en localStorage
+                    // Si el usuario refresca la página, tendrá que loguearse de nuevo.
+                    // Esto es más seguro para datos sensibles.
                 },
 
                 async login() {
                     this.loading = true;
                     this.errorMsg = '';
+                    
                     try {
-                        const res = await fetch(`${API_URL}?email=${this.emailInput}`);
+                        // Construimos la URL con Email, Password y Token
+                        // encodeURIComponent es vital para evitar errores si la contraseña tiene símbolos
+                        const url = `${API_URL}?email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&token=${encodeURIComponent(API_TOKEN)}`;
+                        
+                        const res = await fetch(url);
                         const json = await res.json();
 
                         if (json.status === 'success') {
@@ -353,21 +250,19 @@
                             this.configInfo = json.config.info;
                             this.configStats = json.config.stats;
                             
-                            // Procesamos datos crudos + Estado calculado
                             this.masterData = json.data.map(item => ({
                                 ...item,
                                 computedStatus: (item.images && item.images.length > 0) ? 'Entregado' : 'En Ruta'
                             }));
                             
-                            // Init Filtros
                             this.configFilters.forEach(f => {
                                 if (!(f in this.activeFilters)) this.activeFilters[f] = "";
                             });
 
                             this.loggedIn = true;
-                            localStorage.setItem('app_user_v2', this.emailInput);
-
-                            // Esperamos un tick para renderizar gráficos
+                            // Limpiamos la contraseña de la memoria visual por seguridad
+                            this.passwordInput = ''; 
+                            
                             this.$nextTick(() => {
                                 this.renderAllCharts();
                             });
@@ -377,7 +272,7 @@
                             this.logout();
                         }
                     } catch (e) {
-                        this.errorMsg = 'Error de conexión. Intente nuevamente.';
+                        this.errorMsg = 'No se pudo conectar con el servidor.';
                         console.error(e);
                     } finally {
                         this.loading = false;
@@ -388,18 +283,16 @@
                     this.loggedIn = false;
                     this.masterData = [];
                     this.emailInput = '';
-                    localStorage.removeItem('app_user_v2');
+                    this.passwordInput = '';
                 },
 
                 changeView(view) {
                     this.currentView = view;
-                    // Si volvemos a métricas, aseguramos que los gráficos se rendericen
                     if (view === 'metrics') {
                         this.$nextTick(() => this.renderAllCharts());
                     }
                 },
 
-                // --- LÓGICA DE DATOS ---
                 getUniqueValues(key) {
                     const vals = this.masterData.map(d => d[key]).filter(v => v && v !== 'Sin Dato');
                     return [...new Set(vals)].sort();
@@ -422,35 +315,28 @@
                     return this.masterData.filter(d => d.computedStatus === status).length;
                 },
 
-                // --- LÓGICA DE GRÁFICOS (CHART.JS) ---
                 renderAllCharts() {
-                    // Limpiar gráficos anteriores si existen
                     this.chartsInstances.forEach(c => c.destroy());
                     this.chartsInstances = [];
 
-                    // 1. Gráfico Principal: Estado (Entregado vs En Ruta)
+                    // Gráfico Status
                     this.renderChart(
-                        'chart-status', 
-                        'pie', 
+                        'chart-status', 'doughnut', 
                         ['Entregado', 'En Ruta'], 
                         [this.countStatus('Entregado'), this.countStatus('En Ruta')],
-                        ['#10B981', '#F97316'] // Verde, Naranja
+                        ['#10B981', '#F97316']
                     );
 
-                    // 2. Gráficos Dinámicos desde Configuración del Backend
+                    // Gráficos Dinámicos
                     this.configStats.forEach((conf, idx) => {
-                        // Agrupar datos por la columna configurada
                         const counts = {};
                         this.masterData.forEach(item => {
                             const val = item[conf.headerName] || 'Sin Dato';
                             counts[val] = (counts[val] || 0) + 1;
                         });
-
                         const labels = Object.keys(counts);
                         const data = Object.values(counts);
-                        
-                        // Generar colores aleatorios para las barras
-                        const colors = labels.map(() => `hsl(${Math.random() * 360}, 70%, 50%)`);
+                        const colors = labels.map((_, i) => `hsl(${210 + (i * 20)}, 70%, 50%)`); // Tonos azules
 
                         this.renderChart(`chart-dynamic-${idx}`, conf.type, labels, data, colors);
                     });
@@ -459,7 +345,6 @@
                 renderChart(canvasId, type, labels, data, colors) {
                     const ctx = document.getElementById(canvasId);
                     if (!ctx) return;
-
                     const chart = new Chart(ctx, {
                         type: type,
                         data: {
@@ -467,14 +352,14 @@
                             datasets: [{
                                 data: data,
                                 backgroundColor: colors,
-                                borderWidth: 1
+                                borderWidth: 0
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom' }
+                                legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } }
                             }
                         }
                     });
