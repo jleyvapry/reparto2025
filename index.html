@@ -36,24 +36,6 @@
 
     <div x-data="tmsApp()" x-cloak class="flex w-full h-full relative">
 
-        <div x-show="modalOpen" 
-             class="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
-            
-            <button @click="closeModal" class="absolute top-4 right-4 text-white hover:text-gray-300 z-50 focus:outline-none">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-
-            <img :src="modalImage" class="max-w-full max-h-[90vh] rounded shadow-2xl object-contain border-2 border-slate-700" @click.outside="closeModal">
-            
-            <p class="absolute bottom-4 text-gray-400 text-sm bg-black/50 px-3 py-1 rounded">Presione ESC o clic fuera para cerrar</p>
-        </div>
-
         <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-logistics flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex overflow-hidden border border-slate-700">
                 <div class="hidden md:flex w-1/2 bg-slate-900 flex-col justify-between p-12 text-white relative overflow-hidden">
@@ -66,7 +48,7 @@
                         </div>
                         <h2 class="text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
                     </div>
-                    <div class="text-xs text-slate-500 z-10">&copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.3</div>
+                    <div class="text-xs text-slate-500 z-10">&copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.4</div>
                 </div>
                 <div class="w-full md:w-1/2 p-12 flex flex-col justify-center bg-white relative">
                     <h3 class="text-2xl font-bold text-slate-800 mb-8">Bienvenido</h3>
@@ -125,7 +107,6 @@
             <div class="flex-1 overflow-y-auto p-8" x-show="!loadingData">
                 
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Programado</p>
@@ -157,7 +138,6 @@
                                 <canvas id="chart-status"></canvas>
                             </div>
                         </div>
-                        
                         <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                             <div class="flex justify-between items-center mb-6">
                                 <h3 class="font-bold text-slate-700 flex items-center gap-2">
@@ -207,9 +187,9 @@
                                     <template x-if="item.images.length > 0">
                                         <div class="flex flex-wrap gap-2">
                                             <template x-for="img in item.images" :key="img.label">
-                                                <button @click="openModal(img.url)" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1">
+                                                <a :href="img.url" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1 text-decoration-none">
                                                     📎 <span x-text="img.label"></span>
-                                                </button>
+                                                </a>
                                             </template>
                                         </div>
                                     </template>
@@ -235,7 +215,7 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycbyoyiLKydFEQK46UAEH2CIn94eUR98XJfYYv6HM6LIX-_nIUKwkginnkVmK9m7G-sk/exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
-        // Registramos el plugin para las etiquetas de datos
+        // Registramos el plugin
         Chart.register(ChartDataLabels);
 
         function tmsApp() {
@@ -250,10 +230,6 @@
                 activeProject: 'item5', 
                 currentView: 'metrics',
                 
-                // Modal State
-                modalOpen: false,
-                modalImage: '',
-
                 masterData: [],
                 configFilters: [],
                 configInfo: [],
@@ -267,30 +243,11 @@
                     return this.activeProject === 'item5' ? 'Proyecto: Distribución Item 5' : 'Proyecto: Distribución Item 14';
                 },
 
-                // Lógica KPI Porcentaje (Solicitud #3)
                 get progressPercentage() {
                     const total = this.masterData.length;
                     if (total === 0) return '0%';
                     const delivered = this.countStatus('Entregado');
                     return ((delivered / total) * 100).toFixed(1) + '%';
-                },
-
-                // Lógica Modal (Solicitud #4)
-                openModal(url) {
-                    this.modalImage = url;
-                    this.modalOpen = true;
-                },
-                closeModal() {
-                    this.modalOpen = false;
-                    this.modalImage = '';
-                },
-
-                // Inicialización
-                init() {
-                    // Cierre con tecla ESC
-                    window.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape' && this.modalOpen) this.closeModal();
-                    });
                 },
 
                 async login() {
@@ -378,7 +335,6 @@
                 },
                 countStatus(status) { return this.masterData.filter(d => d.computedStatus === status).length; },
 
-                // --- GRÁFICOS ---
                 renderCharts() {
                     this.renderStatusChart();
                     this.renderMainChart();
@@ -404,7 +360,6 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
-                                // Plugin de Etiquetas Activado
                                 datalabels: {
                                     color: '#fff', 
                                     font: { weight: 'bold', size: 12 },
@@ -421,7 +376,6 @@
                     });
                 },
 
-                // GRÁFICO PRINCIPAL (Solicitud #1 y #2)
                 renderMainChart() {
                     const ctx = document.getElementById('chart-main');
                     if (!ctx) return;
@@ -442,7 +396,6 @@
                     const dataTotal = labels.map(l => stats[l].total);
                     const dataDelivered = labels.map(l => stats[l].delivered);
 
-                    // SIEMPRE Barras Comparativas con etiquetas
                     this.chartsInstances.main = new Chart(ctx, {
                         type: 'bar',
                         data: {
@@ -458,7 +411,7 @@
                                 {
                                     label: 'Programado (Total)',
                                     data: dataTotal,
-                                    backgroundColor: '#cbd5e1', // Gris
+                                    backgroundColor: '#cbd5e1',
                                     barPercentage: 0.7,
                                     categoryPercentage: 0.8,
                                 }
@@ -467,7 +420,7 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            indexAxis: 'y', // Barras horizontales
+                            indexAxis: 'y',
                             scales: {
                                 x: { grid: { display: true, borderDash: [2, 2] } },
                                 y: { grid: { display: false } } 
@@ -475,11 +428,8 @@
                             plugins: {
                                 legend: { position: 'top', align: 'end' },
                                 datalabels: {
-                                    anchor: 'end', 
-                                    align: 'end',
-                                    color: '#1e293b', 
-                                    font: { weight: 'bold', size: 10 },
-                                    // Mostramos el valor numérico
+                                    anchor: 'end', align: 'end',
+                                    color: '#1e293b', font: { weight: 'bold', size: 10 },
                                     formatter: (value) => value > 0 ? value : ''
                                 }
                             }
