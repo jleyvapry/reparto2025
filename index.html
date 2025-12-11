@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>TMS | Distribucion Kits Escolares 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMS | Distribucion Kits Escolares 2025</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -23,7 +24,6 @@
             background-size: 20px 20px;
         }
 
-        /* Scrollbar fina */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -46,7 +46,7 @@
                         </div>
                         <h2 class="text-2xl md:text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
                     </div>
-                    <div class="text-xs text-slate-500 z-10 mt-4 md:mt-0">&copy; 2025 JL ConsulTIC. TMS v2.5</div>
+                    <div class="text-xs text-slate-500 z-10 mt-4 md:mt-0">&copy; 2025 JL ConsulTIC. TMS v2.6</div>
                 </div>
                 <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
                     <h3 class="text-2xl font-bold text-slate-800 mb-6 md:mb-8">Bienvenido</h3>
@@ -65,10 +65,7 @@
             </div>
         </div>
 
-        <div x-show="sidebarOpen" @click="sidebarOpen = false" 
-             class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden"
-             x-transition.opacity>
-        </div>
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden" x-transition.opacity></div>
 
         <aside class="fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -130,7 +127,7 @@
                             <p class="text-2xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
                         </div>
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entregadas</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entregados</p>
                             <p class="text-2xl font-bold text-green-600 mt-2" x-text="countStatus('Entregado')"></p>
                         </div>
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-orange-500">
@@ -159,7 +156,7 @@
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
                                 <h3 class="font-bold text-slate-700 flex items-center gap-2">
                                     <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 
-                                    Comparativo
+                                    Comparativo de Avance
                                 </h3>
                                 <div x-show="activeProject === 'item14'" class="flex items-center gap-2 w-full sm:w-auto">
                                     <span class="text-xs font-bold text-slate-400 uppercase whitespace-nowrap">Nivel:</span>
@@ -194,7 +191,7 @@
                         <template x-for="item in filteredData" :key="item.id">
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden">
                                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-start">
-                                    <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus"></span>
+                                    <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus === 'Entregado' ? 'Entregado' : 'Pendiente'"></span>
                                     <div class="text-right"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p><p class="text-xs font-bold text-slate-700 max-w-[100px] truncate" x-text="item[configInfo[0]] || '-'"></p></div>
                                 </div>
                                 <div class="p-4 flex-1">
@@ -225,9 +222,9 @@
 
     <script>
         // =======================================================
-        // PEGA AQUÍ TU URL Y TOKEN
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
         // =======================================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyoyiLKydFEQK46UAEH2CIn94eUR98XJfYYv6HM6LIX-_nIUKwkginnkVmK9m7G-sk/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycby...TU_URL_AQUI.../exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
         Chart.register(ChartDataLabels);
@@ -240,8 +237,6 @@
                 emailInput: '',
                 passwordInput: '',
                 errorMsg: '',
-                
-                // Sidebar State (Mobile)
                 sidebarOpen: false,
 
                 activeProject: 'item5', 
@@ -364,7 +359,7 @@
                     this.chartsInstances.status = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Entregado', 'En Ruta'],
+                            labels: ['Entregados', 'Pendientes'],
                             datasets: [{
                                 data: [this.countStatus('Entregado'), this.countStatus('En Ruta')],
                                 backgroundColor: ['#22c55e', '#f97316'],
@@ -392,6 +387,7 @@
                     });
                 },
 
+                // LÓGICA DE SEMÁFORO EN EL GRÁFICO PRINCIPAL
                 renderMainChart() {
                     const ctx = document.getElementById('chart-main');
                     if (!ctx) return;
@@ -412,22 +408,32 @@
                     const dataTotal = labels.map(l => stats[l].total);
                     const dataDelivered = labels.map(l => stats[l].delivered);
 
+                    // Generar colores dinámicos (Semáforo)
+                    const dynamicColors = dataDelivered.map((val, idx) => {
+                        const total = dataTotal[idx];
+                        if (total === 0) return '#ef4444'; // Rojo por defecto
+                        const pct = val / total;
+                        if (pct < 0.33) return '#ef4444'; // Rojo (0-33%)
+                        if (pct < 0.67) return '#f97316'; // Naranja (34-66%)
+                        return '#22c55e'; // Verde (67-100%)
+                    });
+
                     this.chartsInstances.main = new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: labels,
                             datasets: [
                                 {
-                                    label: 'Entregado (Ejecutado)',
+                                    label: 'Entregados (Ejecutado)',
                                     data: dataDelivered,
-                                    backgroundColor: '#22c55e',
+                                    backgroundColor: dynamicColors, // Colores Semáforo
                                     barPercentage: 0.7,
                                     categoryPercentage: 0.8,
                                 },
                                 {
                                     label: 'Programado (Total)',
                                     data: dataTotal,
-                                    backgroundColor: '#cbd5e1',
+                                    backgroundColor: '#cbd5e1', // Gris
                                     barPercentage: 0.7,
                                     categoryPercentage: 0.8,
                                 }
@@ -444,9 +450,21 @@
                             plugins: {
                                 legend: { position: 'top', align: 'end' },
                                 datalabels: {
-                                    anchor: 'end', align: 'end',
-                                    color: '#1e293b', font: { weight: 'bold', size: 10 },
-                                    formatter: (value) => value > 0 ? value : ''
+                                    anchor: 'end', 
+                                    align: 'end',
+                                    color: '#1e293b', 
+                                    font: { weight: 'bold', size: 10 },
+                                    // Nuevo Formateador: "25 (50%)"
+                                    formatter: (value, context) => {
+                                        if (context.datasetIndex === 0) { // Barra de Entregados
+                                            const index = context.dataIndex;
+                                            const total = dataTotal[index];
+                                            if (total === 0) return value;
+                                            const pct = Math.round((value / total) * 100);
+                                            return `${value} (${pct}%)`;
+                                        }
+                                        return value > 0 ? value : ''; // Barra Total
+                                    }
                                 }
                             }
                         }
