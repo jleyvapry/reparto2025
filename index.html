@@ -6,22 +6,26 @@
     <title>TMS | Distribucion Kits Escolares 2025</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
         
-        /* Efecto Sutil de Mapa para el Login */
+        /* Fondo Login */
         .bg-logistics {
             background-color: #0f172a;
             background-image: radial-gradient(#1e293b 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
-        /* Scrollbar fina */
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -30,67 +34,49 @@
 </head>
 <body class="bg-gray-50 text-slate-800 h-screen overflow-hidden flex selection:bg-blue-100">
 
-    <div x-data="tmsApp()" x-cloak class="flex w-full h-full">
+    <div x-data="tmsApp()" x-cloak class="flex w-full h-full relative">
+
+        <div x-show="modalOpen" 
+             class="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            
+            <button @click="closeModal" class="absolute top-4 right-4 text-white hover:text-gray-300 z-50 focus:outline-none">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <img :src="modalImage" class="max-w-full max-h-[90vh] rounded shadow-2xl object-contain border-2 border-slate-700" @click.outside="closeModal">
+            
+            <p class="absolute bottom-4 text-gray-400 text-sm bg-black/50 px-3 py-1 rounded">Presione ESC o clic fuera para cerrar</p>
+        </div>
 
         <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-logistics flex items-center justify-center p-4">
-            
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex overflow-hidden border border-slate-700">
-                
                 <div class="hidden md:flex w-1/2 bg-slate-900 flex-col justify-between p-12 text-white relative overflow-hidden">
                     <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-2xl"></div>
                     <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-indigo-600 rounded-full opacity-20 blur-2xl"></div>
-
                     <div class="z-10">
                         <div class="flex items-center gap-2 mb-6">
                             <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="font-bold text-xl tracking-wide">Consorcio<br>Panamundo-Continental</span>
                         </div>
                         <h2 class="text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
-                        <p class="text-slate-400 text-sm leading-relaxed">
-                            Plataforma centralizada para el monitoreo de envíos y evidencias en tiempo real.
-                        </p>
                     </div>
-                    
-                    <div class="text-xs text-slate-500 z-10">
-                        &copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.0
-                    </div>
+                    <div class="text-xs text-slate-500 z-10">&copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.3</div>
                 </div>
-
                 <div class="w-full md:w-1/2 p-12 flex flex-col justify-center bg-white relative">
-                    <div class="mb-8">
-                        <h3 class="text-2xl font-bold text-slate-800">Bienvenido</h3>
-                        <p class="text-sm text-slate-500">Ingrese sus credenciales corporativas</p>
-                    </div>
-
+                    <h3 class="text-2xl font-bold text-slate-800 mb-8">Bienvenido</h3>
                     <form @submit.prevent="login">
                         <div class="space-y-5">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-3 text-slate-400">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
-                                    </span>
-                                    <input type="email" x-model="emailInput" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="usuario@empresa.com" required>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-3 text-slate-400">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                    </span>
-                                    <input type="password" x-model="passwordInput" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="••••••••" required>
-                                </div>
-                            </div>
+                            <input type="email" x-model="emailInput" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm" placeholder="Correo corporativo" required>
+                            <input type="password" x-model="passwordInput" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm" placeholder="Contraseña" required>
                         </div>
-
-                        <div x-show="errorMsg" x-transition class="mt-4 p-3 rounded-lg bg-red-50 border border-red-100 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <span class="text-xs text-red-600 font-medium" x-text="errorMsg"></span>
-                        </div>
-
-                        <button type="submit" :disabled="loading" class="w-full mt-8 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex justify-center items-center gap-2">
+                        <div x-show="errorMsg" class="mt-4 p-3 bg-red-50 text-red-600 text-xs rounded-lg" x-text="errorMsg"></div>
+                        <button type="submit" :disabled="loading" class="w-full mt-8 bg-slate-900 text-white font-bold py-3 rounded-lg flex justify-center items-center">
                             <span x-show="!loading">Ingresar al Sistema</span>
                             <span x-show="loading" class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
                         </button>
@@ -101,119 +87,96 @@
 
         <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20" x-show="loggedIn">
             <div class="p-6 border-b border-slate-800 flex items-center gap-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <div>
-                    <h1 class="font-bold text-white leading-none">JL ConsulTIC</h1>
-                    <span class="text-[10px] uppercase tracking-wider font-semibold text-blue-400">TMS Dashboard</span>
-                </div>
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                <div><h1 class="font-bold text-white">JL ConsulTIC</h1><span class="text-[10px] uppercase font-semibold text-blue-400">TMS Dashboard</span></div>
             </div>
-
-            <div class="px-4 py-6">
+            
+            <div class="px-4 py-6 space-y-2">
                 <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block">Proyecto Activo</label>
-                <div class="space-y-2">
-                    <button @click="switchProject('item5')" 
-                            class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
-                            :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
-                        <span class="text-sm font-medium">🚚 Item 5</span>
-                        <div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
-                    </button>
-                    
-                    <button @click="switchProject('item14')" 
-                            class="w-full flex items-center justify-between p-3 rounded-lg border transition-all group"
-                            :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
-                        <span class="text-sm font-medium">🚚 Item 14</span>
-                        <div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
-                    </button>
-                </div>
+                <button @click="switchProject('item5')" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                    <span class="text-sm font-medium">🚚 Item 5</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                </button>
+                <button @click="switchProject('item14')" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                    <span class="text-sm font-medium">🚚 Item 14</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                </button>
             </div>
 
             <nav class="flex-1 px-4 space-y-1">
-                <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block mt-4">Navegación</label>
-                
-                <button @click="changeView('metrics')" 
-                        :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                    Estadisticas
-                </button>
-
-                <button @click="changeView('viewer')" 
-                        :class="currentView === 'viewer' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                    Visor de Evidencias
-                </button>
+                <button @click="changeView('metrics')" :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📊</span> Estadísticas</button>
+                <button @click="changeView('viewer')" :class="currentView === 'viewer' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📦</span> Visor de Evidencias</button>
             </nav>
 
             <div class="p-4 border-t border-slate-800 bg-slate-900/50">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">U</div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs text-slate-400">Conectado como</p>
-                        <p class="text-xs font-bold text-white truncate w-32" x-text="emailInput"></p>
-                    </div>
-                </div>
-                <button @click="logout" class="w-full py-2 border border-slate-700 rounded text-xs text-slate-400 hover:text-white hover:border-slate-500 transition">
-                    Cerrar Sesión
-                </button>
+                <div class="flex items-center gap-3 mb-3"><div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold">U</div><div class="truncate w-32"><p class="text-xs text-slate-400">Usuario</p><p class="text-xs font-bold text-white" x-text="emailInput"></p></div></div>
+                <button @click="logout" class="w-full py-2 border border-slate-700 rounded text-xs text-slate-400 hover:text-white">Cerrar Sesión</button>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
-            
             <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shadow-sm z-10">
                 <h2 class="text-lg font-bold text-slate-800" x-text="projectTitle"></h2>
-                <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
-                    <span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span> Sistema Operativo
-                </div>
+                <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200"><span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span> Sistema Operativo</div>
             </header>
 
             <div x-show="loadingData" class="absolute inset-0 z-40 bg-white/80 flex items-center justify-center backdrop-blur-sm">
-                <div class="flex flex-col items-center">
-                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div>
-                    <p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando datos...</p>
-                </div>
+                <div class="flex flex-col items-center"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div><p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando datos...</p></div>
             </div>
 
             <div class="flex-1 overflow-y-auto p-8" x-show="!loadingData">
                 
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Entregas</p>
-                            <p class="text-3xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Programado</p>
+                            <p class="text-2xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
-                            <div class="absolute right-0 top-0 w-1 h-full bg-green-500"></div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entregas Confirmadas</p>
-                            <p class="text-3xl font-bold text-green-600 mt-2" x-text="countStatus('Entregado')"></p>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Confirmadas</p>
+                            <p class="text-2xl font-bold text-green-600 mt-2" x-text="countStatus('Entregado')"></p>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
-                            <div class="absolute right-0 top-0 w-1 h-full bg-orange-500"></div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">En Ruta / Pendiente</p>
-                            <p class="text-3xl font-bold text-orange-500 mt-2" x-text="countStatus('En Ruta')"></p>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-orange-500">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pendientes</p>
+                            <p class="text-2xl font-bold text-orange-500 mt-2" x-text="countStatus('En Ruta')"></p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-600">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Porcentaje Avance</p>
+                            <div class="flex items-end gap-2">
+                                <p class="text-2xl font-bold text-blue-700 mt-2" x-text="progressPercentage"></p>
+                                <span class="text-xs text-blue-400 mb-1">del total</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                             <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
-                                <span class="w-1 h-4 bg-blue-600 rounded-full"></span> Status General
+                                <span class="w-1 h-4 bg-blue-600 rounded-full"></span> Status Global
                             </h3>
-                            <div class="h-64 relative"><canvas id="chart-status"></canvas></div>
+                            <div class="flex-grow relative" style="min-height: 250px;">
+                                <canvas id="chart-status"></canvas>
+                            </div>
                         </div>
                         
-                        <template x-for="(conf, index) in configStats" :key="index">
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="font-bold text-slate-700 flex items-center gap-2">
                                     <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 
-                                    <span x-text="conf.label"></span>
+                                    Comparativo: Programado vs Ejecutado
                                 </h3>
-                                <div class="h-64 relative"><canvas :id="'chart-dynamic-' + index"></canvas></div>
+                                <div x-show="activeProject === 'item14'" class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-400 uppercase">Nivel:</span>
+                                    <select x-model="selectedStatIndex" @change="renderMainChart" class="text-xs border-slate-300 rounded-md focus:ring-indigo-500 bg-slate-50 py-1 pl-2 pr-8">
+                                        <template x-for="(conf, idx) in configStats" :key="idx">
+                                            <option :value="idx" x-text="conf.headerName"></option>
+                                        </template>
+                                    </select>
+                                </div>
                             </div>
-                        </template>
+                            <div class="flex-grow relative" style="min-height: 350px;">
+                                <canvas id="chart-main"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -223,59 +186,34 @@
                             <template x-for="filterName in configFilters" :key="filterName">
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1" x-text="filterName"></label>
-                                    <select x-model="activeFilters[filterName]" class="w-full border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50">
-                                        <option value="">Todos</option>
-                                        <template x-for="val in getUniqueValues(filterName)" :key="val">
-                                            <option :value="val" x-text="val"></option>
-                                        </template>
-                                    </select>
+                                    <select x-model="activeFilters[filterName]" class="w-full border-slate-200 rounded-lg text-sm bg-slate-50"><option value="">Todos</option><template x-for="val in getUniqueValues(filterName)" :key="val"><option :value="val" x-text="val"></option></template></select>
                                 </div>
                             </template>
-                            <div class="flex items-end">
-                                <button @click="resetFilters" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">↺ Limpiar Filtros</button>
-                            </div>
+                            <div class="flex items-end"><button @click="resetFilters" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">↺ Limpiar Filtros</button></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                         <template x-for="item in filteredData" :key="item.id">
-                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden group">
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden">
                                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-start">
-                                    <div>
-                                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1"
-                                              :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'"
-                                              x-text="item.computedStatus"></span>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p>
-                                        <p class="text-xs font-bold text-slate-700" x-text="item[configInfo[0]] || '-'"></p>
-                                    </div>
+                                    <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus"></span>
+                                    <div class="text-right"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p><p class="text-xs font-bold text-slate-700" x-text="item[configInfo[0]] || '-'"></p></div>
                                 </div>
-
                                 <div class="p-4 flex-1">
-                                    <template x-for="(header, idx) in configInfo" :key="header">
-                                        <div class="mb-2" x-show="idx > 0">
-                                            <p class="text-[10px] text-slate-400 font-bold uppercase" x-text="header"></p>
-                                            <p class="text-sm text-slate-800 truncate" x-text="item[header] || '-'"></p>
-                                        </div>
-                                    </template>
+                                    <template x-for="(header, idx) in configInfo" :key="header"><div class="mb-2" x-show="idx > 0"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="header"></p><p class="text-sm text-slate-800 truncate" x-text="item[header] || '-'"></p></div></template>
                                 </div>
-
                                 <div class="p-4 bg-slate-50 border-t border-slate-100">
                                     <template x-if="item.images.length > 0">
                                         <div class="flex flex-wrap gap-2">
                                             <template x-for="img in item.images" :key="img.label">
-                                                <a :href="img.url" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1">
+                                                <button @click="openModal(img.url)" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1">
                                                     📎 <span x-text="img.label"></span>
-                                                </a>
+                                                </button>
                                             </template>
                                         </div>
                                     </template>
-                                    <template x-if="item.images.length === 0">
-                                        <div class="text-center py-2">
-                                            <span class="text-xs text-slate-400 italic">Sin documentación adjunta</span>
-                                        </div>
-                                    </template>
+                                    <template x-if="item.images.length === 0"><div class="text-center py-2"><span class="text-xs text-slate-400 italic">Sin evidencias</span></div></template>
                                 </div>
                             </div>
                         </template>
@@ -283,66 +221,82 @@
                 </div>
 
                 <footer class="mt-12 py-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
-                    <div>
-                        Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC & CISAC</span> &copy; 2025
-                    </div>
-                    <div class="flex gap-4">
-                        <span>Soporte</span>
-                        <span>Privacidad</span>
-                        <span>Términos</span>
-                    </div>
+                    <div>Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC & CISAC</span> &copy; 2025</div>
+                    <div class="flex gap-4"><span>Soporte</span><span>Privacidad</span></div>
                 </footer>
-
             </div>
         </main>
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE CONEXIÓN
-        // ==========================================
+        // =======================================================
+        // PEGA AQUÍ TU URL (REEMPLAZAR CON TU URL DE /EXEC)
+        // =======================================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbyoyiLKydFEQK46UAEH2CIn94eUR98XJfYYv6HM6LIX-_nIUKwkginnkVmK9m7G-sk/exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
+
+        // Registramos el plugin para las etiquetas de datos
+        Chart.register(ChartDataLabels);
 
         function tmsApp() {
             return {
                 loggedIn: false,
-                loading: false, // Login loading
-                loadingData: false, // Project switch loading
+                loading: false,
+                loadingData: false,
                 emailInput: '',
                 passwordInput: '',
                 errorMsg: '',
                 
-                // App State
-                activeProject: 'item5', // 'item5' or 'item14'
+                activeProject: 'item5', 
                 currentView: 'metrics',
                 
-                // Data
+                // Modal State
+                modalOpen: false,
+                modalImage: '',
+
                 masterData: [],
                 configFilters: [],
                 configInfo: [],
                 configStats: [],
-                activeFilters: {},
-                chartsInstances: [],
+                selectedStatIndex: 0,
                 
-                // Computed Title
+                activeFilters: {},
+                chartsInstances: {}, 
+
                 get projectTitle() {
-                    return this.activeProject === 'item5' 
-                        ? 'Proyecto: Distribución Item 5' 
-                        : 'Proyecto: Distribución Item 14';
+                    return this.activeProject === 'item5' ? 'Proyecto: Distribución Item 5' : 'Proyecto: Distribución Item 14';
                 },
 
+                // Lógica KPI Porcentaje (Solicitud #3)
+                get progressPercentage() {
+                    const total = this.masterData.length;
+                    if (total === 0) return '0%';
+                    const delivered = this.countStatus('Entregado');
+                    return ((delivered / total) * 100).toFixed(1) + '%';
+                },
+
+                // Lógica Modal (Solicitud #4)
+                openModal(url) {
+                    this.modalImage = url;
+                    this.modalOpen = true;
+                },
+                closeModal() {
+                    this.modalOpen = false;
+                    this.modalImage = '';
+                },
+
+                // Inicialización
                 init() {
-                    // Check local storage for session persistence if desired (optional)
+                    // Cierre con tecla ESC
+                    window.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.modalOpen) this.closeModal();
+                    });
                 },
 
-                // 1. LOGIN PROCESS
                 async login() {
                     this.loading = true;
                     this.errorMsg = '';
-                    
                     try {
-                        // First load default project (item5)
                         await this.fetchProjectData('item5');
                         this.loggedIn = true;
                         this.activeProject = 'item5';
@@ -353,52 +307,43 @@
                     }
                 },
 
-                // 2. SWITCH PROJECT
                 async switchProject(projectKey) {
                     if (this.activeProject === projectKey) return;
                     this.activeProject = projectKey;
+                    this.selectedStatIndex = 0;
                     this.loadingData = true;
-                    
                     try {
                         await this.fetchProjectData(projectKey);
                     } catch (e) {
-                        console.error(e);
-                        alert('Error cargando el proyecto: ' + e.message);
+                        alert('Error cargando: ' + e.message);
                     } finally {
                         this.loadingData = false;
                     }
                 },
 
-                // 3. CORE FETCH LOGIC
                 async fetchProjectData(projectKey) {
                     const url = `${API_URL}?token=${encodeURIComponent(API_TOKEN)}&email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&dataset=${projectKey}`;
-                    
                     const res = await fetch(url);
                     const json = await res.json();
 
                     if (json.status === 'success') {
-                        // Update Configs
                         this.configFilters = json.config.filters;
                         this.configInfo = json.config.info;
                         this.configStats = json.config.stats;
                         
-                        // Process Data
                         this.masterData = json.data.map(item => ({
                             ...item,
                             computedStatus: (item.images && item.images.length > 0) ? 'Entregado' : 'En Ruta'
                         }));
                         
-                        // Reset Filters
                         this.activeFilters = {};
                         this.configFilters.forEach(f => this.activeFilters[f] = "");
 
-                        // Render Charts (wait for DOM)
                         this.$nextTick(() => {
-                            if (this.currentView === 'metrics') this.renderAllCharts();
+                            if (this.currentView === 'metrics') this.renderCharts();
                         });
-
                     } else {
-                        throw new Error(json.message || 'Error desconocido del servidor');
+                        throw new Error(json.message || 'Error del servidor');
                     }
                 },
 
@@ -407,24 +352,22 @@
                     this.masterData = [];
                     this.emailInput = '';
                     this.passwordInput = '';
-                    this.chartsInstances.forEach(c => c.destroy());
+                    if(this.chartsInstances.status) this.chartsInstances.status.destroy();
+                    if(this.chartsInstances.main) this.chartsInstances.main.destroy();
                 },
 
                 changeView(view) {
                     this.currentView = view;
                     if (view === 'metrics') {
-                        this.$nextTick(() => this.renderAllCharts());
+                        this.$nextTick(() => this.renderCharts());
                     }
                 },
 
-                // --- DATA UTILS ---
                 getUniqueValues(key) {
                     const vals = this.masterData.map(d => d[key]).filter(v => v && v !== 'Sin Dato');
                     return [...new Set(vals)].sort();
                 },
-                resetFilters() {
-                    for (let key in this.activeFilters) this.activeFilters[key] = "";
-                },
+                resetFilters() { for (let key in this.activeFilters) this.activeFilters[key] = ""; },
                 get filteredData() {
                     return this.masterData.filter(item => {
                         for (let key of this.configFilters) {
@@ -433,66 +376,115 @@
                         return true;
                     });
                 },
-                countStatus(status) {
-                    return this.masterData.filter(d => d.computedStatus === status).length;
+                countStatus(status) { return this.masterData.filter(d => d.computedStatus === status).length; },
+
+                // --- GRÁFICOS ---
+                renderCharts() {
+                    this.renderStatusChart();
+                    this.renderMainChart();
                 },
 
-                // --- CHARTS ---
-                renderAllCharts() {
-                    this.chartsInstances.forEach(c => c.destroy());
-                    this.chartsInstances = [];
-
-                    // Status Chart
-                    this.renderChart('chart-status', 'doughnut', 
-                        ['Entregado', 'En Ruta'], 
-                        [this.countStatus('Entregado'), this.countStatus('En Ruta')],
-                        ['#22c55e', '#f97316']
-                    );
-
-                    // Dynamic Charts
-                    this.configStats.forEach((conf, idx) => {
-                        const counts = {};
-                        this.masterData.forEach(item => {
-                            const val = item[conf.headerName] || 'Sin Dato';
-                            counts[val] = (counts[val] || 0) + 1;
-                        });
-                        const labels = Object.keys(counts);
-                        const data = Object.values(counts);
-                        // Blue palette generator
-                        const colors = labels.map((_, i) => `hsl(${210 + (i * 10)}, ${70}%, ${50 - (i%2)*10}%)`);
-
-                        this.renderChart(`chart-dynamic-${idx}`, conf.type, labels, data, colors);
-                    });
-                },
-
-                renderChart(canvasId, type, labels, data, colors) {
-                    const ctx = document.getElementById(canvasId);
+                renderStatusChart() {
+                    const ctx = document.getElementById('chart-status');
                     if (!ctx) return;
-                    
-                    const chart = new Chart(ctx, {
-                        type: type,
+                    if (this.chartsInstances.status) this.chartsInstances.status.destroy();
+
+                    this.chartsInstances.status = new Chart(ctx, {
+                        type: 'doughnut',
                         data: {
-                            labels: labels,
+                            labels: ['Entregado', 'En Ruta'],
                             datasets: [{
-                                data: data,
-                                backgroundColor: colors,
-                                borderWidth: 0,
-                                borderRadius: 4
+                                data: [this.countStatus('Entregado'), this.countStatus('En Ruta')],
+                                backgroundColor: ['#22c55e', '#f97316'],
+                                borderWidth: 0
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: {size: 10} } }
-                            },
-                            scales: type === 'bar' ? {
-                                y: { beginAtZero: true, grid: { display: false } },
-                                x: { grid: { display: false } }
-                            } : { display: false }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                                // Plugin de Etiquetas Activado
+                                datalabels: {
+                                    color: '#fff', 
+                                    font: { weight: 'bold', size: 12 },
+                                    formatter: (value, ctx) => {
+                                        let sum = 0;
+                                        let dataArr = ctx.chart.data.datasets[0].data;
+                                        dataArr.map(data => { sum += data; });
+                                        if (sum === 0) return '0%';
+                                        return (value*100 / sum).toFixed(0)+"%";
+                                    }
+                                }
+                            }
                         }
                     });
-                    this.chartsInstances.push(chart);
+                },
+
+                // GRÁFICO PRINCIPAL (Solicitud #1 y #2)
+                renderMainChart() {
+                    const ctx = document.getElementById('chart-main');
+                    if (!ctx) return;
+                    if (this.chartsInstances.main) this.chartsInstances.main.destroy();
+
+                    const conf = this.configStats[this.selectedStatIndex];
+                    if (!conf) return;
+
+                    const stats = {};
+                    this.masterData.forEach(item => {
+                        const key = item[conf.headerName] || 'Sin Dato';
+                        if(!stats[key]) stats[key] = { total: 0, delivered: 0 };
+                        stats[key].total++;
+                        if(item.computedStatus === 'Entregado') stats[key].delivered++;
+                    });
+
+                    const labels = Object.keys(stats);
+                    const dataTotal = labels.map(l => stats[l].total);
+                    const dataDelivered = labels.map(l => stats[l].delivered);
+
+                    // SIEMPRE Barras Comparativas con etiquetas
+                    this.chartsInstances.main = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Entregado (Ejecutado)',
+                                    data: dataDelivered,
+                                    backgroundColor: '#22c55e',
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8,
+                                },
+                                {
+                                    label: 'Programado (Total)',
+                                    data: dataTotal,
+                                    backgroundColor: '#cbd5e1', // Gris
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // Barras horizontales
+                            scales: {
+                                x: { grid: { display: true, borderDash: [2, 2] } },
+                                y: { grid: { display: false } } 
+                            },
+                            plugins: {
+                                legend: { position: 'top', align: 'end' },
+                                datalabels: {
+                                    anchor: 'end', 
+                                    align: 'end',
+                                    color: '#1e293b', 
+                                    font: { weight: 'bold', size: 10 },
+                                    // Mostramos el valor numérico
+                                    formatter: (value) => value > 0 ? value : ''
+                                }
+                            }
+                        }
+                    });
                 }
             }
         }
