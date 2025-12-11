@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMS | Distribucion Kits Escolares 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>TMS | Distribucion Kits Escolares 2025</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -18,14 +17,13 @@
         body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
         
-        /* Fondo Login */
         .bg-logistics {
             background-color: #0f172a;
             background-image: radial-gradient(#1e293b 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
-        /* Scrollbar */
+        /* Scrollbar fina */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -36,22 +34,22 @@
 
     <div x-data="tmsApp()" x-cloak class="flex w-full h-full relative">
 
-        <div x-show="!loggedIn" class="absolute inset-0 z-50 bg-logistics flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex overflow-hidden border border-slate-700">
-                <div class="hidden md:flex w-1/2 bg-slate-900 flex-col justify-between p-12 text-white relative overflow-hidden">
+        <div x-show="!loggedIn" class="absolute inset-0 z-[60] bg-logistics flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden border border-slate-700 max-h-[90vh] md:max-h-none overflow-y-auto">
+                <div class="w-full md:w-1/2 bg-slate-900 flex-col justify-between p-8 md:p-12 text-white relative overflow-hidden flex">
                     <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-2xl"></div>
                     <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-indigo-600 rounded-full opacity-20 blur-2xl"></div>
                     <div class="z-10">
                         <div class="flex items-center gap-2 mb-6">
                             <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <span class="font-bold text-xl tracking-wide">Consorcio<br>Panamundo-Continental</span>
+                            <span class="font-bold text-xl tracking-wide">Consorcio<br>Panamundo</span>
                         </div>
-                        <h2 class="text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
+                        <h2 class="text-2xl md:text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
                     </div>
-                    <div class="text-xs text-slate-500 z-10">&copy; 2025 JL ConsulTIC & CISAC. Sistema TMS v2.4</div>
+                    <div class="text-xs text-slate-500 z-10 mt-4 md:mt-0">&copy; 2025 JL ConsulTIC. TMS v2.5</div>
                 </div>
-                <div class="w-full md:w-1/2 p-12 flex flex-col justify-center bg-white relative">
-                    <h3 class="text-2xl font-bold text-slate-800 mb-8">Bienvenido</h3>
+                <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 md:mb-8">Bienvenido</h3>
                     <form @submit.prevent="login">
                         <div class="space-y-5">
                             <input type="email" x-model="emailInput" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm" placeholder="Correo corporativo" required>
@@ -67,25 +65,38 @@
             </div>
         </div>
 
-        <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20" x-show="loggedIn">
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" 
+             class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden"
+             x-transition.opacity>
+        </div>
+
+        <aside class="fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0"
+               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+               x-show="loggedIn">
+            
             <div class="p-6 border-b border-slate-800 flex items-center gap-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
                 <div><h1 class="font-bold text-white">JL ConsulTIC</h1><span class="text-[10px] uppercase font-semibold text-blue-400">TMS Dashboard</span></div>
+                <button @click="sidebarOpen = false" class="ml-auto lg:hidden text-slate-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
             
-            <div class="px-4 py-6 space-y-2">
+            <div class="px-4 py-6 space-y-2 overflow-y-auto">
                 <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block">Proyecto Activo</label>
-                <button @click="switchProject('item5')" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                <button @click="switchProject('item5'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
                     <span class="text-sm font-medium">🚚 Item 5</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
                 </button>
-                <button @click="switchProject('item14')" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                <button @click="switchProject('item14'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
                     <span class="text-sm font-medium">🚚 Item 14</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
                 </button>
             </div>
 
             <nav class="flex-1 px-4 space-y-1">
-                <button @click="changeView('metrics')" :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📊</span> Estadísticas</button>
-                <button @click="changeView('viewer')" :class="currentView === 'viewer' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📦</span> Visor de Evidencias</button>
+                <button @click="changeView('metrics'); sidebarOpen = false" :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📊</span> Estadísticas</button>
+                <button @click="changeView('viewer'); sidebarOpen = false" :class="currentView === 'viewer' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📦</span> Visor de Evidencias</button>
             </nav>
 
             <div class="p-4 border-t border-slate-800 bg-slate-900/50">
@@ -94,20 +105,26 @@
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
-            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 shadow-sm z-10">
-                <h2 class="text-lg font-bold text-slate-800" x-text="projectTitle"></h2>
-                <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200"><span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span> Sistema Operativo</div>
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative w-full">
+            
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 shrink-0">
+                <div class="flex items-center gap-3">
+                    <button @click="sidebarOpen = true" class="lg:hidden text-slate-600 hover:text-blue-600 p-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h2 class="text-sm md:text-lg font-bold text-slate-800 truncate max-w-[200px] md:max-w-none" x-text="projectTitle"></h2>
+                </div>
+                <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 whitespace-nowrap"><span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span> Online</div>
             </header>
 
             <div x-show="loadingData" class="absolute inset-0 z-40 bg-white/80 flex items-center justify-center backdrop-blur-sm">
-                <div class="flex flex-col items-center"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div><p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando datos...</p></div>
+                <div class="flex flex-col items-center"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div><p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando...</p></div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-8" x-show="!loadingData">
+            <div class="flex-1 overflow-y-auto p-4 md:p-8" x-show="!loadingData">
                 
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Programado</p>
                             <p class="text-2xl font-bold text-slate-800 mt-2" x-text="masterData.length"></p>
@@ -139,21 +156,21 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                            <div class="flex justify-between items-center mb-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
                                 <h3 class="font-bold text-slate-700 flex items-center gap-2">
                                     <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> 
-                                    Comparativo: Programado vs Ejecutado
+                                    Comparativo
                                 </h3>
-                                <div x-show="activeProject === 'item14'" class="flex items-center gap-2">
-                                    <span class="text-xs font-bold text-slate-400 uppercase">Nivel:</span>
-                                    <select x-model="selectedStatIndex" @change="renderMainChart" class="text-xs border-slate-300 rounded-md focus:ring-indigo-500 bg-slate-50 py-1 pl-2 pr-8">
+                                <div x-show="activeProject === 'item14'" class="flex items-center gap-2 w-full sm:w-auto">
+                                    <span class="text-xs font-bold text-slate-400 uppercase whitespace-nowrap">Nivel:</span>
+                                    <select x-model="selectedStatIndex" @change="renderMainChart" class="text-xs border-slate-300 rounded-md focus:ring-indigo-500 bg-slate-50 py-1 pl-2 pr-8 w-full sm:w-auto">
                                         <template x-for="(conf, idx) in configStats" :key="idx">
                                             <option :value="idx" x-text="conf.headerName"></option>
                                         </template>
                                     </select>
                                 </div>
                             </div>
-                            <div class="flex-grow relative" style="min-height: 350px;">
+                            <div class="flex-grow relative" style="min-height: 300px;">
                                 <canvas id="chart-main"></canvas>
                             </div>
                         </div>
@@ -162,23 +179,23 @@
 
                 <div x-show="currentView === 'viewer'" x-transition.opacity>
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <template x-for="filterName in configFilters" :key="filterName">
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1" x-text="filterName"></label>
                                     <select x-model="activeFilters[filterName]" class="w-full border-slate-200 rounded-lg text-sm bg-slate-50"><option value="">Todos</option><template x-for="val in getUniqueValues(filterName)" :key="val"><option :value="val" x-text="val"></option></template></select>
                                 </div>
                             </template>
-                            <div class="flex items-end"><button @click="resetFilters" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">↺ Limpiar Filtros</button></div>
+                            <div class="flex items-end"><button @click="resetFilters" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">↺ Limpiar</button></div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <template x-for="item in filteredData" :key="item.id">
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden">
                                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-start">
                                     <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus"></span>
-                                    <div class="text-right"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p><p class="text-xs font-bold text-slate-700" x-text="item[configInfo[0]] || '-'"></p></div>
+                                    <div class="text-right"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p><p class="text-xs font-bold text-slate-700 max-w-[100px] truncate" x-text="item[configInfo[0]] || '-'"></p></div>
                                 </div>
                                 <div class="p-4 flex-1">
                                     <template x-for="(header, idx) in configInfo" :key="header"><div class="mb-2" x-show="idx > 0"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="header"></p><p class="text-sm text-slate-800 truncate" x-text="item[header] || '-'"></p></div></template>
@@ -187,9 +204,7 @@
                                     <template x-if="item.images.length > 0">
                                         <div class="flex flex-wrap gap-2">
                                             <template x-for="img in item.images" :key="img.label">
-                                                <a :href="img.url" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1 text-decoration-none">
-                                                    📎 <span x-text="img.label"></span>
-                                                </a>
+                                                <a :href="img.url" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-blue-400 hover:text-blue-600 transition flex items-center gap-1 text-decoration-none">📎 <span x-text="img.label"></span></a>
                                             </template>
                                         </div>
                                     </template>
@@ -200,7 +215,7 @@
                     </div>
                 </div>
 
-                <footer class="mt-12 py-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+                <footer class="mt-12 py-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 text-center md:text-left">
                     <div>Desarrollado por <span class="font-bold text-slate-600">JL ConsulTIC & CISAC</span> &copy; 2025</div>
                     <div class="flex gap-4"><span>Soporte</span><span>Privacidad</span></div>
                 </footer>
@@ -210,12 +225,11 @@
 
     <script>
         // =======================================================
-        // PEGA AQUÍ TU URL (REEMPLAZAR CON TU URL DE /EXEC)
+        // PEGA AQUÍ TU URL Y TOKEN
         // =======================================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbyoyiLKydFEQK46UAEH2CIn94eUR98XJfYYv6HM6LIX-_nIUKwkginnkVmK9m7G-sk/exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
-        // Registramos el plugin
         Chart.register(ChartDataLabels);
 
         function tmsApp() {
@@ -227,6 +241,9 @@
                 passwordInput: '',
                 errorMsg: '',
                 
+                // Sidebar State (Mobile)
+                sidebarOpen: false,
+
                 activeProject: 'item5', 
                 currentView: 'metrics',
                 
@@ -235,12 +252,11 @@
                 configInfo: [],
                 configStats: [],
                 selectedStatIndex: 0,
-                
                 activeFilters: {},
                 chartsInstances: {}, 
 
                 get projectTitle() {
-                    return this.activeProject === 'item5' ? 'Proyecto: Distribución Item 5' : 'Proyecto: Distribución Item 14';
+                    return this.activeProject === 'item5' ? 'Distribución Item 5' : 'Distribución Item 14';
                 },
 
                 get progressPercentage() {
