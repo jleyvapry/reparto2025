@@ -11,6 +11,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
@@ -42,11 +44,11 @@
                     <div class="z-10">
                         <div class="flex items-center gap-2 mb-6">
                             <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <span class="font-bold text-xl tracking-wide">Consorcio<br>Panamundo-Continental</span>
+                            <span class="font-bold text-xl tracking-wide">Consorcio<br>Panamundo</span>
                         </div>
                         <h2 class="text-2xl md:text-3xl font-light mb-4">Gestión Inteligente<br><span class="font-bold text-blue-400">Logística & Distribución</span></h2>
                     </div>
-                    <div class="text-xs text-slate-500 z-10 mt-4 md:mt-0">&copy; 2025 JL ConsulTIC. TMS v2.7</div>
+                    <div class="text-xs text-slate-500 z-10 mt-4 md:mt-0">&copy; 2025 JL ConsulTIC. TMS v2.9</div>
                 </div>
                 <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
                     <h3 class="text-2xl font-bold text-slate-800 mb-6 md:mb-8">Bienvenido</h3>
@@ -113,6 +115,14 @@
                 <div class="flex flex-col items-center"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900"></div><p class="mt-4 text-sm font-semibold text-slate-600">Sincronizando...</p></div>
             </div>
 
+            <div x-show="downloadingReport" class="absolute inset-0 z-50 bg-black/50 flex items-center justify-center backdrop-blur-sm">
+                <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600"></div>
+                    <p class="mt-4 text-sm font-bold text-slate-800">Generando Excel...</p>
+                    <p class="text-xs text-slate-500">Por favor espere</p>
+                </div>
+            </div>
+
             <div class="flex-1 overflow-y-auto p-4 md:p-8" x-show="!loadingData">
                 
                 <div x-show="currentView === 'metrics'" x-transition.opacity>
@@ -165,6 +175,36 @@
                             <div class="flex-grow relative" style="min-height: 300px;">
                                 <canvas id="chart-main"></canvas>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="w-1 h-4 bg-green-600 rounded-full"></span> 
+                            Descarga de Reportes Consolidados (RPTNEC)
+                        </h3>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-center items-center">
+                            
+                            <button @click="downloadReport('nec_item5')" class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 hover:shadow-md transition group">
+                                <span class="p-2 bg-white rounded-full text-green-600 group-hover:scale-110 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                </span>
+                                <div class="text-left">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-green-800">Reporte NEC</p>
+                                    <p class="text-sm font-bold">Descargar Item 5</p>
+                                </div>
+                            </button>
+
+                            <button @click="downloadReport('nec_item14')" class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 hover:shadow-md transition group">
+                                <span class="p-2 bg-white rounded-full text-blue-600 group-hover:scale-110 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                </span>
+                                <div class="text-left">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-blue-800">Reporte NEC</p>
+                                    <p class="text-sm font-bold">Descargar Item 14</p>
+                                </div>
+                            </button>
+
                         </div>
                     </div>
                 </div>
@@ -229,6 +269,7 @@
                 loggedIn: false,
                 loading: false,
                 loadingData: false,
+                downloadingReport: false, // Estado de descarga
                 emailInput: '',
                 passwordInput: '',
                 errorMsg: '',
@@ -307,6 +348,42 @@
                         });
                     } else {
                         throw new Error(json.message || 'Error del servidor');
+                    }
+                },
+
+                // --- NUEVA LÓGICA DE DESCARGA DE REPORTES ---
+                async downloadReport(reportType) {
+                    this.downloadingReport = true;
+                    try {
+                        // Solicitamos al backend los datos crudos
+                        const url = `${API_URL}?token=${encodeURIComponent(API_TOKEN)}&email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&action=download_report&reportType=${reportType}`;
+                        
+                        const res = await fetch(url);
+                        const json = await res.json();
+
+                        if (json.status === 'success') {
+                            const rawData = json.data; // Array de Arrays [[A1,B1], [A2,B2]...]
+                            
+                            // Generamos Excel con SheetJS
+                            const worksheet = XLSX.utils.aoa_to_sheet(rawData);
+                            const workbook = XLSX.utils.book_new();
+                            XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte NEC");
+                            
+                            // Generamos fecha y hora para el nombre
+                            const now = new Date();
+                            const dateStr = now.toISOString().split('T')[0];
+                            const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+                            const fileName = `RPT_${reportType.toUpperCase()}_${dateStr}_${timeStr}.xlsx`;
+
+                            XLSX.writeFile(workbook, fileName);
+
+                        } else {
+                            alert('Error generando reporte: ' + json.message);
+                        }
+                    } catch (e) {
+                        alert('Error de conexión: ' + e.message);
+                    } finally {
+                        this.downloadingReport = false;
                     }
                 },
 
