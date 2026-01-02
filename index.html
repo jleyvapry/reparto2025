@@ -338,7 +338,8 @@
                         
                         this.masterData = json.data.map(item => ({
                             ...item,
-                            computedStatus: (item.images && item.images.length > 0) ? 'Entregado' : 'En Ruta'
+                            // Ahora leerá directamente el texto de la columna de la hoja
+                        computedStatus: item['estadoNEC'] === 'Entregado' ? 'Entregado' : 'En Ruta'
                         }));
                         
                         this.activeFilters = {};
