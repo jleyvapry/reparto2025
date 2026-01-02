@@ -67,8 +67,6 @@
             </div>
         </div>
 
-        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden" x-transition.opacity></div>
-
         <aside class="fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                x-show="loggedIn">
@@ -227,7 +225,7 @@
                         <template x-for="item in filteredData" :key="item.id">
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col overflow-hidden">
                                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-start">
-                                    <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus === 'Entregado' ? 'Entregado' : 'Pendiente'"></span>
+                                    <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-1" :class="item.computedStatus === 'Entregado' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'" x-text="item.computedStatus"></span>
                                     <div class="text-right"><p class="text-[10px] text-slate-400 font-bold uppercase" x-text="configInfo[0]"></p><p class="text-xs font-bold text-slate-700 max-w-[100px] truncate" x-text="item[configInfo[0]] || '-'"></p></div>
                                 </div>
                                 <div class="p-4 flex-1">
@@ -257,9 +255,6 @@
     </div>
 
     <script>
-        // =======================================================
-        // PEGA AQUÍ TU URL Y TOKEN
-        // =======================================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbyoyiLKydFEQK46UAEH2CIn94eUR98XJfYYv6HM6LIX-_nIUKwkginnkVmK9m7G-sk/exec';
         const API_TOKEN = 'JL_TIC_SECURE_2025_KEY'; 
 
@@ -336,11 +331,28 @@
                         this.configInfo = json.config.info;
                         this.configStats = json.config.stats;
                         
-                        this.masterData = json.data.map(item => ({
-                            ...item,
-                            // Ahora leerá directamente el texto de la columna de la hoja
-                        computedStatus: item['estadoNEC'] === 'ENTREGADO' ? 'Entregado' : 'En Ruta'
-                        }));
+                        this.masterData = json.data.map(item => {
+                            // --- LÓGICA DE ESTADO REFORZADA (OPCION A) ---
+                            // 1. Buscamos el valor en 'estadoNEC' o 'Estado' (si existiera)
+                            const valExcel = item['estadoNEC'] || item['Estado'] || '';
+                            const textoLimpio = String(valExcel).trim().toUpperCase();
+                            
+                            let finalStatus = 'En Ruta';
+                            
+                            // 2. Si el Excel dice 'ENTREGADO', manda el Excel
+                            if (textoLimpio === 'ENTREGADO') {
+                                finalStatus = 'Entregado';
+                            } 
+                            // 3. Respaldo (Solo para Item 5 que no tiene columna estadoNEC en tu config actual)
+                            else if (projectKey === 'item5' && item.images && item.images.length > 0) {
+                                finalStatus = 'Entregado';
+                            }
+
+                            return {
+                                ...item,
+                                computedStatus: finalStatus
+                            };
+                        });
                         
                         this.activeFilters = {};
                         this.configFilters.forEach(f => this.activeFilters[f] = "");
@@ -353,30 +365,22 @@
                     }
                 },
 
-                // --- DESCARGA DINÁMICA POR CORTE (11AM / 4PM) ---
                 async downloadReport(corteLabel) {
                     this.downloadingReport = true;
                     try {
-                        // Enviamos el activeProject para que el backend sepa de qué hoja sacar datos
                         const url = `${API_URL}?token=${encodeURIComponent(API_TOKEN)}&email=${encodeURIComponent(this.emailInput)}&password=${encodeURIComponent(this.passwordInput)}&action=download_report&projectKey=${this.activeProject}`;
-                        
                         const res = await fetch(url);
                         const json = await res.json();
 
                         if (json.status === 'success') {
                             const rawData = json.data; 
-                            
                             const worksheet = XLSX.utils.aoa_to_sheet(rawData);
                             const workbook = XLSX.utils.book_new();
                             XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte NEC");
-                            
                             const now = new Date();
                             const dateStr = now.toISOString().split('T')[0];
-                            // Nombre archivo: RPT_ITEM5_11AM_2025-01-01.xlsx
                             const fileName = `RPT_${this.activeProject.toUpperCase()}_${corteLabel}_${dateStr}.xlsx`;
-
                             XLSX.writeFile(workbook, fileName);
-
                         } else {
                             alert('Error generando reporte: ' + json.message);
                         }
