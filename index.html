@@ -236,13 +236,13 @@
                             const valExcel = item['estadoNEC'] || item['Estado'] || '';
                             const statusTexto = String(valExcel).trim().toUpperCase();
                             
-                            // --- MODIFICACIÓN: ESTRICTAMENTE POR TEXTO EXCEL ---
                             let finalStatus = 'En Ruta';
                             if (statusTexto === 'ENTREGADO') {
                                 finalStatus = 'Entregado';
+                            } else if (item.images && item.images.length > 0) {
+                                finalStatus = 'Entregado'; // Fallback por fotos
                             }
-                            // Se eliminó el bloque 'else if (item.images...)'
-                            
+
                             return { ...item, computedStatus: finalStatus };
                         });
                         
