@@ -227,7 +227,7 @@
                         
                         this.masterData = json.data.map(item => {
                             // LÓGICA ESTRICTA: SOLO SE BASA EN LA COLUMNA DE ESTADO DEL EXCEL
-                            const valExcel = item['estadoNEC'] || item['Estado'] || '';
+                            const valExcel = item['EstadoNEC'] || item['Estado'] || '';
                             const statusTexto = String(valExcel).trim().toUpperCase();
                             
                             // ÚNICA CONDICIÓN PARA SER ENTREGADO
