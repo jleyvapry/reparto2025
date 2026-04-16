@@ -194,11 +194,11 @@
             return {
                 loggedIn: false, loading: false, loadingData: false, downloadingReport: false,
                 emailInput: '', passwordInput: '', errorMsg: '',
-                sidebarOpen: false, activeProject: 'item5', currentView: 'metrics',
+                sidebarOpen: false, activeProject: 'item15', currentView: 'metrics',
                 masterData: [], configFilters: [], configInfo: [], configStats: [],
                 selectedStatIndex: 0, activeFilters: {}, chartsInstances: {},
 
-                get projectTitle() { return this.activeProject === 'item5' ? 'Distribución Item 5' : 'Distribución Item 14'; },
+                get projectTitle() { return this.activeProject === 'item5' ? 'Distribución Item 5' : 'Distribución Item 5'; },
                 get progressPercentage() {
                     const total = this.masterData.length;
                     return total === 0 ? '0%' : ((this.countStatus('Entregado') / total) * 100).toFixed(1) + '%';
@@ -206,7 +206,7 @@
 
                 async login() {
                     this.loading = true; this.errorMsg = '';
-                    try { await this.fetchProjectData('item5'); this.loggedIn = true; } 
+                    try { await this.fetchProjectData('item15'); this.loggedIn = true; } 
                     catch (e) { this.errorMsg = e.message; } finally { this.loading = false; }
                 },
 
