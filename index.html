@@ -72,15 +72,18 @@
             </div>
             <div class="px-4 py-6 space-y-2 overflow-y-auto">
                 <label class="text-xs font-bold text-slate-500 uppercase ml-2 mb-2 block">Proyecto Activo</label>
+                 <button @click="switchProject('item15'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item15' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                    <span class="text-sm font-medium">🚚 Item 15</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                </button>
+                <button @click="switchProject('item3'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item3' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
+                    <span class="text-sm font-medium">🚚 Item 3</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
+                </button>
             <!--    <button @click="switchProject('item5'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item5' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
                     <span class="text-sm font-medium">🚚 Item 5</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item5' ? 'bg-green-400' : 'bg-slate-600'"></div>
                 </button>
                 <button @click="switchProject('item14'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item14' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
                     <span class="text-sm font-medium">🚚 Item 14</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
                 </button> -->
-                 <button @click="switchProject('item15'); sidebarOpen = false" class="w-full flex items-center justify-between p-3 rounded-lg border transition-all" :class="activeProject === 'item15' ? 'bg-blue-600/10 border-blue-600 text-white' : 'bg-slate-800 border-transparent hover:bg-slate-700'">
-                    <span class="text-sm font-medium">🚚 Item 15</span><div class="w-2 h-2 rounded-full" :class="activeProject === 'item14' ? 'bg-green-400' : 'bg-slate-600'"></div>
-                </button>
             </div>
             <nav class="flex-1 px-4 space-y-1">
                 <button @click="changeView('metrics'); sidebarOpen = false" :class="currentView === 'metrics' ? 'bg-slate-800 text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"><span>📊</span> Estadísticas</button>
